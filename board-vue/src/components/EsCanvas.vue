@@ -1,20 +1,42 @@
 <template>
     <canvas className='canvas' id="drawCanvas"></canvas>
+    <OperationBox @operationEmits="operationClick"></OperationBox>
+    <configBox @colorChange="colorChange"></configBox>
 </template>
 
 <script setup lang="ts">
+import OperationBox from './ExCanvas/OperationBox.vue';
+import configBox from './ExCanvas/ConfigBox.vue'
 import { onMounted } from 'vue'
+import { Path, ctxFormat } from './EsCanvas'
+
 let mouseButtonDown = false;
+let canvas: any;
 let ctx: any;
-let pathInfo: any = {
+
+// 用于保存历史路径
+// 保存当前这次的绘制路径
+let lineArr: Array<Path> = [];
+let pathArr: Array<Array<Path>> = [];
+
+// 默认笔刷格式
+let ctxInfo: ctxFormat = {
+    strokeStyle: 'black',
+    lineWidth: 3
+}
+
+// 绘制路径信息
+let pathInfo: Path = {
     lastX: null,
     lastY:  null,
     beginY: null,
     beginX: null,
-    strokeStyle: 'black',
-    lineWidth: 3
+    strokeStyle: ctxInfo.strokeStyle,
+    lineWidth: ctxInfo.lineWidth
 }
-function draw(pathInfo: any, useCtx: any) {
+
+// 绘制动作
+function draw(pathInfo: Path, useCtx: any) {
     if (pathInfo.beginX !== null && pathInfo.beginY !== null && useCtx) {
         const {lastX, lastY, beginX, beginY, strokeStyle, lineWidth} = pathInfo;
         useCtx.beginPath();
@@ -27,8 +49,9 @@ function draw(pathInfo: any, useCtx: any) {
         useCtx.closePath();
     }
 }
-function handleMouseDown(event: any) {
+function handleMouseDown() {
     mouseButtonDown = true;
+    lineArr = []
 }
 function handleMouseMove(event: any) {
     if (mouseButtonDown) {
@@ -37,13 +60,15 @@ function handleMouseMove(event: any) {
             beginY: pathInfo.lastY,
             lastX: event.pageX,
             lastY: event.pageY,
-            strokeStyle: 'black',
-            lineWidth: 3
+            strokeStyle: ctxInfo.strokeStyle,
+            lineWidth: ctxInfo.lineWidth
         }
         draw(pathInfo, ctx)
+        // 记录历史信息
+        lineArr.push(pathInfo);
     }
 }
-function handleMouseUp(event: any) {
+function handleMouseUp() {
     mouseButtonDown = false;
     pathInfo = {
         lastX: null,
@@ -51,15 +76,39 @@ function handleMouseUp(event: any) {
         beginY: null,
         beginX: null,
     }
+    pathArr.push(lineArr)
+    lineArr = []
+}
+
+// 触发操作按钮
+const operationClick = (val: any) => {
+    // 撤销功能
+    if (val === 'revoke') {
+        if (pathArr.length === 0) return;
+        pathArr.pop()
+        let rect = canvas!.getBoundingClientRect();
+        ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
+        pathArr.map(path => {
+            path.map(item => {
+                draw(item, ctx);
+            })
+        })
+    }
+}
+
+const colorChange = (val: any) => {
+    if (val) {
+        ctxInfo.strokeStyle = val;
+    }
 }
 
 onMounted(() => {
-    let canvas: any = document.querySelector('#drawCanvas');
+    canvas = document.querySelector('#drawCanvas');
     if (!canvas) return;
     let dpr = window.devicePixelRatio || 1;
-    canvas.width = (document.body.clientWidth - 20) * dpr;  
+    canvas.width = (document.body.clientWidth) * dpr;  
     canvas.height = (document.body.clientHeight - 20) * dpr;  
-    canvas.style.width = (document.body.clientWidth - 20) + 'px';  
+    canvas.style.width = (document.body.clientWidth) + 'px';  
     canvas.style.height = (document.body.clientHeight - 20) + 'px'  
 
     ctx = canvas.getContext('2d');
