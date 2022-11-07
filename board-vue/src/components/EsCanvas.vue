@@ -1,14 +1,16 @@
 <template>
     <canvas className='canvas' id="drawCanvas"></canvas>
     <OperationBox @operationEmits="operationClick"></OperationBox>
-    <configBox @colorChange="colorChange"></configBox>
+    <configBox @colorChange="colorChange" @widthChange="widthChange" :config="colorConfig"></configBox>
 </template>
 
 <script setup lang="ts">
 import OperationBox from './ExCanvas/OperationBox.vue';
 import configBox from './ExCanvas/ConfigBox.vue'
-import { onMounted } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { Path, ctxFormat } from './EsCanvas'
+import { CoreErrorCodes } from '@intlify/core-base';
+import Color from 'element-plus/es/components/color-picker/src/utils/color';
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -28,17 +30,35 @@ let ctxInfo: ctxFormat = {
 // 绘制路径信息
 let pathInfo: Path = {
     lastX: null,
-    lastY:  null,
+    lastY: null,
     beginY: null,
     beginX: null,
     strokeStyle: ctxInfo.strokeStyle,
     lineWidth: ctxInfo.lineWidth
 }
 
+// 配置调色板信息
+let colorConfig: any = ref({
+    panWidth: ctxInfo.lineWidth,
+    colorList: [
+        'FF6900',
+        'FCB900',
+        '7BDCB5',
+        '00D084',
+        '8ED1FC',
+        '0693E3',
+        'ABB8C3',
+        'EB144C',
+        'F78DA7',
+        '9900EF',
+        '000000'
+    ]
+})
+
 // 绘制动作
 function draw(pathInfo: Path, useCtx: any) {
     if (pathInfo.beginX !== null && pathInfo.beginY !== null && useCtx) {
-        const {lastX, lastY, beginX, beginY, strokeStyle, lineWidth} = pathInfo;
+        const { lastX, lastY, beginX, beginY, strokeStyle, lineWidth } = pathInfo;
         useCtx.beginPath();
         useCtx.lineCap = 'round';
         useCtx.moveTo(beginX, beginY);
@@ -72,7 +92,7 @@ function handleMouseUp() {
     mouseButtonDown = false;
     pathInfo = {
         lastX: null,
-        lastY:  null,
+        lastY: null,
         beginY: null,
         beginX: null,
     }
@@ -102,26 +122,33 @@ const colorChange = (val: any) => {
     }
 }
 
+const widthChange = (val: any) => {
+    if (val) {
+        ctxInfo.lineWidth = val;
+        colorConfig.value.panWidth = val;
+    }
+}
+
 onMounted(() => {
     canvas = document.querySelector('#drawCanvas');
     if (!canvas) return;
     let dpr = window.devicePixelRatio || 1;
-    canvas.width = (document.body.clientWidth) * dpr;  
-    canvas.height = (document.body.clientHeight - 20) * dpr;  
-    canvas.style.width = (document.body.clientWidth) + 'px';  
-    canvas.style.height = (document.body.clientHeight - 20) + 'px'  
+    canvas.width = (document.body.clientWidth) * dpr;
+    canvas.height = (document.body.clientHeight - 20) * dpr;
+    canvas.style.width = (document.body.clientWidth) + 'px';
+    canvas.style.height = (document.body.clientHeight - 20) + 'px'
 
     ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
     mouseButtonDown = false;
     if (window.PointerEvent) {
         canvas.addEventListener('pointerdown', handleMouseDown, false);
-        canvas.addEventListener('pointermove', handleMouseMove, false);  
-        canvas.addEventListener('pointerup', handleMouseUp, false);  
+        canvas.addEventListener('pointermove', handleMouseMove, false);
+        canvas.addEventListener('pointerup', handleMouseUp, false);
     } else {
         canvas.addEventListener('mousedown', handleMouseDown, false);
-        canvas.addEventListener('mousemove', handleMouseMove, false);  
-        canvas.addEventListener('mouseup', handleMouseUp, false); 
+        canvas.addEventListener('mousemove', handleMouseMove, false);
+        canvas.addEventListener('mouseup', handleMouseUp, false);
     }
 })
 </script>

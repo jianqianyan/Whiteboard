@@ -27,6 +27,14 @@ function operationClick(val: any) {
         display: flex;
         align-items: center;
         justify-content: center;
+        transform: translateX(-50%) translateY(-50%);
+        transition-duration: 0.2s;
+        transition-property: transform;
+    }
+    .revoke-box:hover{
+        transform: translateX(-50%) translateY(-50%) scale(1.1);
+        transition-duration: 0.2s;
+        transition-property: transform;
     }
 }
 </style>
