@@ -16,7 +16,8 @@ interface TextPath {
     text: any,
     fontFamily: any,
     fontWidth: any,
+    fontColor: any
 }
 
 
-export type { Path, ctxFormat,TextPath }
+export type { Path, ctxFormat, TextPath }

@@ -3,6 +3,9 @@
         <div class="revoke-box button-style" @click="operationClick('revoke')">
             <svg-icon iconName="icon-chexiao" />
         </div>
+        <div class="user-box button-style">
+            <svg-icon iconName="icon-yonghu"></svg-icon>
+        </div>
     </div>
 </template>
 
@@ -14,10 +17,14 @@ function operationClick(val: any) {
 </script>
 <style scoped lang="less">
 @import './currencyStyle.less';
+
 .operation-box {
     position: absolute;
     bottom: 50px;
     left: 50px;
     z-index: 15;
+}
+.user-box{
+    margin-top: 10px;
 }
 </style>

@@ -16,6 +16,7 @@ export function draw(pathInfo: Path, useCtx: any) {
 
 export function drawText(TextInfo: TextPath, useCtx: any) {
   useCtx.font = TextInfo.fontWidth + " " + TextInfo.fontFamily;
+  useCtx.fillStyle = TextInfo.fontColor || "black";
   useCtx.fillText(TextInfo.text, TextInfo.x, TextInfo.y);
   let textMsg = useCtx.measureText(TextInfo.text);
   let msg = {
@@ -25,7 +26,7 @@ export function drawText(TextInfo: TextPath, useCtx: any) {
   return msg;
 }
 
-export function drawInput(Info: any,input: any) {
+export function drawInput(Info: any, input: any) {
   let path = "left: " + Info.x + "px;" + "top: " + Info.y + "px;";
   input.setAttribute("style", path);
 }

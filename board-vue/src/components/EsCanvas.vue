@@ -1,17 +1,8 @@
 <template>
   <canvas className="canvas" id="drawCanvas"></canvas>
   <OperationBox @operationEmits="operationClick"></OperationBox>
-  <configBox
-    @colorChange="colorChange"
-    @widthChange="widthChange"
-    @methodChange="methodChange"
-    :config="colorConfig"
-  ></configBox>
-  <textInput
-    @textEntry="textEntry"
-    v-if="textInputShow.value"
-    ref="textInputRef"
-  ></textInput>
+  <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig"></configBox>
+  <textInput @textEntry="textEntry" v-if="textInputShow.value" ref="textInputRef"></textInput>
 </template>
 
 <script setup lang="ts">
@@ -48,10 +39,6 @@ let pathInfo: Path = {
 };
 // 点击位置
 let pointerInfo: any = {
-  x: 0,
-  y: 0,
-};
-let textPointer: any = {
   x: 0,
   y: 0,
 };
@@ -145,17 +132,15 @@ const operationClick = (val: any) => {
 };
 
 // 笔刷信息更改
-const colorChange = (val: any) => {
-  if (val) {
-    ctxInfo.strokeStyle = val;
+const brushChange = (val: any) => {
+  if (val.strokeStyle) {
+    ctxInfo.strokeStyle = val.strokeStyle;
   }
-};
-const widthChange = (val: any) => {
-  if (val) {
-    ctxInfo.lineWidth = val;
-    colorConfig.value.panWidth = val;
+  if (val.lineWidth) {
+    ctxInfo.lineWidth = val.lineWidth;
   }
-};
+}
+
 
 // 更换绘制方式（如笔刷，文字）
 const methodChange = (val: any) => {
@@ -167,6 +152,7 @@ const textEntry = (val: any) => {
   let TextInfo = {
     fontWidth: "20px",
     fontFamily: "serif",
+    fontColor: ctxInfo.strokeStyle,
     text: val,
     x: pointerInfo.x,
     y: pointerInfo.y,
