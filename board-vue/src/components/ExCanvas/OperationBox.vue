@@ -1,6 +1,6 @@
 <template>
     <div class="operation-box">
-        <div class="revoke-box" @click="operationClick('revoke')">
+        <div class="revoke-box button-style" @click="operationClick('revoke')">
             <svg-icon iconName="icon-chexiao" />
         </div>
     </div>
@@ -13,28 +13,11 @@ function operationClick(val: any) {
 }
 </script>
 <style scoped lang="less">
+@import './currencyStyle.less';
 .operation-box {
     position: absolute;
     bottom: 50px;
     left: 50px;
     z-index: 15;
-    .revoke-box{
-        border: 1px solid #409eff;
-        border-radius: 50%;
-        background: #fff;
-        width: 2em;
-        height: 2em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transform: translateX(-50%) translateY(-50%);
-        transition-duration: 0.2s;
-        transition-property: transform;
-    }
-    .revoke-box:hover{
-        transform: translateX(-50%) translateY(-50%) scale(1.1);
-        transition-duration: 0.2s;
-        transition-property: transform;
-    }
 }
 </style>

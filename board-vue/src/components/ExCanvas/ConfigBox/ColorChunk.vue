@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, defineProps, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 const props = defineProps(["color"]);
 let colorChunk: any = ref(null);
 onMounted(() => {
