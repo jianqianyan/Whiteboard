@@ -16,7 +16,9 @@ interface TextPath {
     text: any,
     fontFamily: any,
     fontWidth: any,
-    fontColor: any
+    fontColor: any,
+    width?: any,
+    height?: any
 }
 
 

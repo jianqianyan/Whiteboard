@@ -1,8 +1,16 @@
 <template>
   <canvas className="canvas" id="drawCanvas"></canvas>
   <OperationBox @operationEmits="operationClick"></OperationBox>
-  <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig"></configBox>
-  <textInput @textEntry="textEntry" v-if="textInputShow.value" ref="textInputRef"></textInput>
+  <configBox
+    @brushChange="brushChange"
+    @methodChange="methodChange"
+    :config="colorConfig"
+  ></configBox>
+  <textInput
+    @textEntry="textEntry"
+    v-if="textInputShow.value"
+    ref="textInputRef"
+  ></textInput>
 </template>
 
 <script setup lang="ts">
@@ -65,7 +73,11 @@ let colorConfig: any = ref({
 let lineArr: Array<Path> = [];
 
 // 用于保存历史路径
+// 保存绘制路径
 let pathArr: Array<Array<Path>> = [];
+
+// 保存文字和图片信息信息
+let textArr: Array<any> = [];
 
 function handleMouseDown(event: any) {
   if (drawMethod.value === 1) {
@@ -79,7 +91,7 @@ function handleMouseDown(event: any) {
     }
     pointerInfo = {
       x: event.pageX,
-      y: event.pageY,
+      y: event.pageY - 26,
     };
     textInputShow.value = true;
     nextTick(() => {
@@ -138,9 +150,8 @@ const brushChange = (val: any) => {
   }
   if (val.lineWidth) {
     ctxInfo.lineWidth = val.lineWidth;
-  }
-}
-
+  } 
+};
 
 // 更换绘制方式（如笔刷，文字）
 const methodChange = (val: any) => {
@@ -155,9 +166,10 @@ const textEntry = (val: any) => {
     fontColor: ctxInfo.strokeStyle,
     text: val,
     x: pointerInfo.x,
-    y: pointerInfo.y,
+    y: pointerInfo.y + 20,
   };
-  drawText(TextInfo, ctx);
+  let endMsg = drawText(TextInfo, ctx);
+  textArr.push({ ...TextInfo, ...endMsg });
   textInputShow.value = false;
 };
 
