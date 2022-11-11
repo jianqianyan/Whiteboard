@@ -140,6 +140,9 @@ const operationClick = (val: any) => {
         draw(item, ctx);
       });
     });
+    textArr.map((path) => {
+      drawText(path, ctx)
+    })
   }
 };
 
