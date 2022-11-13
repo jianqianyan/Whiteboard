@@ -1,16 +1,8 @@
 <template>
   <canvas className="canvas" id="drawCanvas"></canvas>
   <OperationBox @operationEmits="operationClick"></OperationBox>
-  <configBox
-    @brushChange="brushChange"
-    @methodChange="methodChange"
-    :config="colorConfig"
-  ></configBox>
-  <textInput
-    @textEntry="textEntry"
-    v-if="textInputShow.value"
-    ref="textInputRef"
-  ></textInput>
+  <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig"></configBox>
+  <textInput @textEntry="textEntry" v-if="textInputShow.value" ref="textInputRef"></textInput>
 </template>
 
 <script setup lang="ts">
@@ -18,8 +10,9 @@ import OperationBox from "./ExCanvas/OperationBox.vue";
 import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
 import { onMounted, reactive, ref, nextTick } from "vue";
-import { Path, ctxFormat } from "./ExCanvas/EsCanvas";
-import { draw, drawText, drawInput } from "./ExCanvas/Brush";
+import { ctxFormat } from "./ExCanvas/EsCanvas";
+import { draw, drawInput, DrawInfo, BrushPath, TextPath } from "./ExCanvas/Brush";
+import src from "../assets/png/1.jpg"
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -37,7 +30,7 @@ let ctxInfo: ctxFormat = {
 //
 
 // 绘制路径信息
-let pathInfo: Path = {
+let pathInfo: BrushPath = {
   lastX: null,
   lastY: null,
   beginY: null,
@@ -70,21 +63,17 @@ let colorConfig: any = ref({
 });
 
 // 保存当前这次的绘制路径
-let lineArr: Array<Path> = [];
+let lineArr: Array<DrawInfo> = [];
 
 // 用于保存历史路径
 // 保存绘制路径
-let pathArr: Array<Array<Path>> = [];
-
-// 保存文字和图片信息信息
-let textArr: Array<any> = [];
+let pathArr: Array<Array<DrawInfo> | DrawInfo> = [];
 
 function handleMouseDown(event: any) {
   if (drawMethod.value === 1) {
     mouseButtonDown = true;
     lineArr = [];
   } else if (drawMethod.value === 2) {
-    // textInputShow.value = false;
     if (textInputShow.value) {
       textInputShow.value = false;
       return;
@@ -110,12 +99,17 @@ function handleMouseMove(event: any) {
       strokeStyle: ctxInfo.strokeStyle,
       lineWidth: ctxInfo.lineWidth,
     };
-    draw(pathInfo, ctx);
+    let drawInfo: DrawInfo = {
+      type: 'brush',
+      data: pathInfo
+    }
+    draw(drawInfo, ctx);
     // 记录历史信息
-    lineArr.push(pathInfo);
+    lineArr.push(drawInfo);
   }
 }
 function handleMouseUp() {
+  pathArr.push(lineArr);
   mouseButtonDown = false;
   pathInfo = {
     lastX: null,
@@ -123,7 +117,6 @@ function handleMouseUp() {
     beginY: null,
     beginX: null,
   };
-  pathArr.push(lineArr);
   lineArr = [];
 }
 
@@ -135,13 +128,14 @@ const operationClick = (val: any) => {
     pathArr.pop();
     let rect = canvas!.getBoundingClientRect();
     ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
-    pathArr.map((path) => {
-      path.map((item) => {
-        draw(item, ctx);
-      });
-    });
-    textArr.map((path) => {
-      drawText(path, ctx)
+    pathArr.map(item => {
+      if (Array.isArray(item)) {
+        item.map(path => {
+          draw(path, ctx);
+        })
+      } else {
+        draw(item, ctx)
+      }
     })
   }
 };
@@ -153,7 +147,7 @@ const brushChange = (val: any) => {
   }
   if (val.lineWidth) {
     ctxInfo.lineWidth = val.lineWidth;
-  } 
+  }
 };
 
 // 更换绘制方式（如笔刷，文字）
@@ -163,7 +157,7 @@ const methodChange = (val: any) => {
 };
 
 const textEntry = (val: any) => {
-  let TextInfo = {
+  let TextInfo: TextPath = {
     fontWidth: "20px",
     fontFamily: "serif",
     fontColor: ctxInfo.strokeStyle,
@@ -171,8 +165,12 @@ const textEntry = (val: any) => {
     x: pointerInfo.x,
     y: pointerInfo.y + 20,
   };
-  let endMsg = drawText(TextInfo, ctx);
-  textArr.push({ ...TextInfo, ...endMsg });
+  let drawInfo: DrawInfo = {
+    type: 'text',
+    data: TextInfo
+  }
+  draw(drawInfo, ctx);
+  pathArr.push(drawInfo);
   textInputShow.value = false;
 };
 
@@ -197,6 +195,12 @@ onMounted(() => {
     canvas.addEventListener("mousemove", handleMouseMove, false);
     canvas.addEventListener("mouseup", handleMouseUp, false);
   }
+  const image = new Image(60, 45);
+  image.src = src;
+  console.log(image)
+  nextTick(() => {
+    ctx.drawImage(image, 200 , 100, 100, 100)
+  })
 });
 </script>
 
