@@ -11,8 +11,7 @@ import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
 import { onMounted, reactive, ref, nextTick } from "vue";
 import { ctxFormat } from "./ExCanvas/EsCanvas";
-import { draw, drawInput, DrawInfo, BrushPath, TextPath } from "./ExCanvas/Brush";
-import src from "../assets/png/1.jpg"
+import { draw, drawInput, DrawInfo, BrushPath, TextPath, ImagePath } from "./ExCanvas/Brush";
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -87,6 +86,23 @@ function handleMouseDown(event: any) {
       let input = document.querySelector(".text-input");
       drawInput(pointerInfo, input);
     });
+  } else if (drawMethod.value === 3) {
+    pointerInfo = {
+      x: event.pageX,
+      y: event.pageY,
+    };
+    let ImageInfo: ImagePath = {
+      x: pointerInfo.x,
+      y: pointerInfo.y,
+      src: "http://localhost:3000/public/image/1.jpg",
+      width: 100,
+      height: 100
+    }
+    let drawInfo: DrawInfo = {
+      type: 'image',
+      data: ImageInfo
+    }
+    draw(drawInfo, ctx);
   }
 }
 function handleMouseMove(event: any) {
@@ -195,12 +211,6 @@ onMounted(() => {
     canvas.addEventListener("mousemove", handleMouseMove, false);
     canvas.addEventListener("mouseup", handleMouseUp, false);
   }
-  const image = new Image(60, 45);
-  image.src = src;
-  console.log(image)
-  nextTick(() => {
-    ctx.drawImage(image, 200 , 100, 100, 100)
-  })
 });
 </script>
 

@@ -1,7 +1,7 @@
 // 绘制数据接口
 export interface DrawInfo {
   type: string,
-  data: BrushPath | TextPath
+  data: BrushPath | TextPath | ImagePath
 }
 // Brush 数据类型接口
 export interface BrushPath {
@@ -23,12 +23,22 @@ export interface TextPath {
   width?: any,
   height?: any
 }
+// image 数据类型接口
+export interface ImagePath {
+  x: any,
+  y: any,
+  src: any,
+  width: any,
+  height: any
+}
 // 绘制动作
 export function draw(info: DrawInfo, useCtx: any) {
   if (info.type === 'brush') {
     drawBrush(info.data as BrushPath, useCtx);
   } else if (info.type === 'text') {
     drawText(info.data as TextPath, useCtx);
+  } else if (info.type === 'image') {
+    drawImage(info.data as ImagePath, useCtx);
   }
 }
 
@@ -57,4 +67,13 @@ function drawText(path: TextPath, useCtx: any) {
   useCtx.font = path.fontWidth + " " + path.fontFamily;
   useCtx.fillStyle = path.fontColor || "black";
   useCtx.fillText(path.text, path.x, path.y);
+}
+
+// image 类型绘制
+function drawImage(path: ImagePath, useCtx: any) {
+  const image = new Image();
+  image.src = path.src;
+  image.onload = () => {
+    useCtx.drawImage(image, path.x, path.y, path.width, path.height);
+  }
 }

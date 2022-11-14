@@ -20,8 +20,8 @@ function operationClick(val: any) {
 
 .operation-box {
     position: absolute;
-    bottom: 50px;
-    left: 50px;
+    bottom: 20px;
+    left: 40px;
     z-index: 15;
 }
 .user-box{

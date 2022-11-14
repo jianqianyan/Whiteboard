@@ -22,7 +22,7 @@
         <div class="text-box button-style" @click="methodChange(2)">
             <svg-icon iconName="icon-wenzi"></svg-icon>    
         </div>
-        <div class="image-box button-style">
+        <div class="image-box button-style" @click="methodChange(3)">
             <svg-icon iconName="icon-tupian"></svg-icon>
         </div>
     </div>
@@ -83,7 +83,7 @@ const methodChange = (val: any) => {
 .config-box {
     position: absolute;
     top: 40px;
-    left: 50px;
+    left: 40px;
     z-index: 15;
 
     .text-box {
