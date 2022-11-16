@@ -1,5 +1,7 @@
 export default {
     button: {
-        revoke: 'revoke'
+        revoke: 'revoke',
+        userLogin: 'user login',
+        touristLogin: 'tourist login'
     }
 }
