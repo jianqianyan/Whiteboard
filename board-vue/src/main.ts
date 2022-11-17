@@ -3,6 +3,7 @@ import './style.css';
 import App from './App.vue';
 import i18n from './i18n';
 import './assets/svg/iconfont.js'
+import './style/base.less'
 
 const app = createApp(App);
 import { setupSvgIcon } from './plugin/SvgIcon/index'

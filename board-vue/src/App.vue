@@ -8,5 +8,5 @@ import index from './pages/index.vue';
   <index></index>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 </style>

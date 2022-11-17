@@ -10,14 +10,14 @@
     >
       <div class="login-dialog">
         <div class="code-input">
-            <el-input></el-input>    
+          <input type="text" />
         </div>
         <div class="choose-user">
           <div class="user-login">
-            <button>{{ $t('button.userLogin' ) }}</button>
+            <button>{{ $t("button.userLogin") }}</button>
           </div>
           <div class="tourist-login">
-            <button>{{ $t('button.touristLogin' )}}</button>
+            <button>{{ $t("button.touristLogin") }}</button>
           </div>
         </div>
       </div>
@@ -33,8 +33,9 @@ const falsec = ref(false);
 </script>
 
 <style scoped lang="less">
-.code-input{
-    margin: 0 0 10px 0 ;
+.code-input {
+  width: 100%;
+  margin: 0 0 10px 0;
 }
 .choose-user {
   width: 100%;
