@@ -8,10 +8,12 @@
       :show-close="falsec"
       align-center
     >
-      <div class="login-dialog">
-        <div class="code-input">
-          <input type="text" />
+      <template #header>
+        <div class="login-header">
+          <img :src="logo" alt="">
         </div>
+      </template>
+      <div class="login-dialog">
         <div class="choose-user">
           <div class="user-login">
             <button>{{ $t("button.userLogin") }}</button>
@@ -27,15 +29,16 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import logo from '../../assets/png/logo.jpg'
 
 const dialogVisible = ref(true);
 const falsec = ref(false);
 </script>
 
 <style scoped lang="less">
-.code-input {
-  width: 100%;
-  margin: 0 0 10px 0;
+.login-header{
+  text-align: center;
+  margin-left: 16px;
 }
 .choose-user {
   width: 100%;
