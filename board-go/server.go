@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
+	//go run ./board-go/server.go
 	r := gin.Default()
-	r.LoadHTMLFiles("./templates/fileUpload.html")
 	// r.GET("/upload", func(c *gin.Context) {
 	// 	c.Redirect(http.StatusMovedPermanently, "https://www.baidu.com/")
 	// 	// c.HTML(http.StatusOK, "fileUpload.html", nil)
