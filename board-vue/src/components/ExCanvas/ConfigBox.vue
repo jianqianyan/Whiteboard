@@ -2,8 +2,8 @@
     <div class="config-box">
         <el-popover :width="280" placement="right" trigger="click">
             <template #reference>
-                <div class="icon-bi button-style" @click="methodChange(1)">
-                    <svg-icon iconName="icon-bi"></svg-icon>
+                <div class="icon-bi button-style" @click="methodChange(1)" :class="{'button-clicked': buttonHover.value === 1}">
+                    <svg-icon iconName="icon-bi" :color="buttonColor(1)"></svg-icon>
                 </div>
             </template>
             <template #default>
@@ -19,18 +19,18 @@
                 </div>
             </template>
         </el-popover>
-        <div class="text-box button-style" @click="methodChange(2)">
-            <svg-icon iconName="icon-wenzi"></svg-icon>    
+        <div class="text-box button-style" @click="methodChange(2)" :class="{'button-clicked': buttonHover.value === 2}">
+            <svg-icon iconName="icon-wenzi" :color="buttonColor(2)"></svg-icon>    
         </div>
-        <div class="image-box button-style" @click="methodChange(3)">
-            <svg-icon iconName="icon-tupian"></svg-icon>
+        <div class="image-box button-style" @click="methodChange(3)" :class="{'button-clicked': buttonHover.value === 3}">
+            <svg-icon iconName="icon-tupian" :color="buttonColor(3)"></svg-icon>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import ColorChunk from "./ConfigBox/ColorChunk.vue";
-import { toRef, ref,reactive } from "vue";
+import { toRef, reactive } from "vue";
 const props = defineProps(["config"]);
 const emits = defineEmits(["brushChange", "methodChange"]);
 let config: any = toRef(props, "config");
@@ -48,6 +48,13 @@ let colorList = config.value.colorList || [
     "9900EF",
     "000000",
 ];
+let buttonHover = reactive({value: 0});
+let buttonColor = function(number: number) {
+    let root = document.querySelector(":root");
+    let buttonColor = getComputedStyle(root as Element).getPropertyValue('--button-color');
+    let buttonHoverColor = getComputedStyle(root as Element).getPropertyValue('--button-hover-color');
+    return buttonHover.value === number ? buttonHoverColor : buttonColor;
+}
 
 function colorChange(color: any, index: any) {
     emits("brushChange", { strokeStyle: "#" + color});
@@ -73,6 +80,8 @@ const widthChange = (val: any) => {
 };
 
 const methodChange = (val: any) => {
+    buttonHover.value = val;
+    console.log();
     emits("methodChange", val);
 };
 </script>
@@ -114,5 +123,8 @@ const methodChange = (val: any) => {
         align-items: center;
         justify-content: center;
     }
+}
+.button-clicked {
+  background: var(--button-hover-background);
 }
 </style>

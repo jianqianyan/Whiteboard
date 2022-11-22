@@ -17,7 +17,11 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: '#409eff'
+    default: '#6965db'
+  },
+  background: {
+    type: String,
+    default: '#6965db'
   }
 })
 // 图标在 iconfont 中的名字
@@ -33,12 +37,12 @@ const svgClass = computed(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .svg-icon {
   width: 1em;
   height: 1em;
   position: relative;
-  fill: currentColor;
+  fill: var(--button-color);
   vertical-align: -2px;
 }
 </style>

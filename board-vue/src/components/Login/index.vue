@@ -31,7 +31,7 @@
 import { ref } from "vue";
 import logo from '../../assets/png/logo.jpg'
 
-const dialogVisible = ref(true);
+const dialogVisible = ref(false);
 const falsec = ref(false);
 </script>
 
