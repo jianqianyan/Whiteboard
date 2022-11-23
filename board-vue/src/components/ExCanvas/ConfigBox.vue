@@ -1,29 +1,43 @@
 <template>
     <div class="config-box">
-        <el-popover :width="280" placement="right" trigger="click">
-            <template #reference>
-                <div class="icon-bi button-style" @click="methodChange(1)" :class="{'button-clicked': buttonHover.value === 1}">
-                    <svg-icon iconName="icon-bi" :color="buttonColor(1)"></svg-icon>
-                </div>
-            </template>
-            <template #default>
-                <div class="color-pick">
-                    <div v-for="(item, index) in colorList" :key="index + 'color'">
-                        <ColorChunk :color="item" @click="colorChange(item, index)" class="color-chunk" :name="item">
-                        </ColorChunk>
+        <div class="brush-box">
+            <el-popover :width="280" placement="right" trigger="click">
+                <template #reference>
+                    <div class="icon-bi button-style" @click="methodChange(1)"
+                        :class="{ 'button-clicked': buttonHover.value === 1 }">
+                        <svg-icon iconName="icon-bi" :color="buttonColor(1)"></svg-icon>
                     </div>
-                </div>
-                <div class="width-pick">
-                    <input type="range" :value="panWidth.value" min="0" max="10" @change="widthChange" />
-                    <div class="width-box">{{ panWidth.value }}</div>
-                </div>
-            </template>
-        </el-popover>
-        <div class="text-box button-style" @click="methodChange(2)" :class="{'button-clicked': buttonHover.value === 2}">
-            <svg-icon iconName="icon-wenzi" :color="buttonColor(2)"></svg-icon>    
+                </template>
+                <template #default>
+                    <div class="color-pick">
+                        <div v-for="(item, index) in colorList" :key="index + 'color'">
+                            <ColorChunk :color="item" @click="colorChange(item, index)" class="color-chunk"
+                                :name="item">
+                            </ColorChunk>
+                        </div>
+                    </div>
+                    <div class="width-pick">
+                        <input type="range" :value="panWidth.value" min="0" max="10" @change="widthChange" />
+                        <div class="width-box">{{ panWidth.value }}</div>
+                    </div>
+                </template>
+            </el-popover>
         </div>
-        <div class="image-box button-style" @click="methodChange(3)" :class="{'button-clicked': buttonHover.value === 3}">
+        <div class="text-box button-style" @click="methodChange(2)"
+            :class="{ 'button-clicked': buttonHover.value === 2 }">
+            <svg-icon iconName="icon-wenzi" :color="buttonColor(2)"></svg-icon>
+        </div>
+        <div class="image-box button-style" @click="methodChange(3)"
+            :class="{ 'button-clicked': buttonHover.value === 3 }">
             <svg-icon iconName="icon-tupian" :color="buttonColor(3)"></svg-icon>
+        </div>
+        <div class="rectangle-box button-style" @click="methodChange(4)"
+            :class="{ 'button-clicked': buttonHover.value === 4 }">
+            <svg-icon iconName="icon-juxing" :color="buttonColor(4)"></svg-icon>
+        </div>
+        <div class="round-box button-style" @click="methodChange(5)"
+            :class="{ 'button-clicked': buttonHover.value === 5 }">
+            <svg-icon iconName="icon-radio-on" :color="buttonColor(5)"></svg-icon>
         </div>
     </div>
 </template>
@@ -48,8 +62,8 @@ let colorList = config.value.colorList || [
     "9900EF",
     "000000",
 ];
-let buttonHover = reactive({value: 0});
-let buttonColor = function(number: number) {
+let buttonHover = reactive({ value: 0 });
+let buttonColor = function (number: number) {
     let root = document.querySelector(":root");
     let buttonColor = getComputedStyle(root as Element).getPropertyValue('--button-color');
     let buttonHoverColor = getComputedStyle(root as Element).getPropertyValue('--button-hover-color');
@@ -57,7 +71,7 @@ let buttonColor = function(number: number) {
 }
 
 function colorChange(color: any, index: any) {
-    emits("brushChange", { strokeStyle: "#" + color});
+    emits("brushChange", { strokeStyle: "#" + color });
     let chunks = document.querySelectorAll(".color-chunk");
     for (let i = 0; i < chunks.length; ++i) {
         let style: any = chunks[i].getAttribute("style");
@@ -72,17 +86,21 @@ function colorChange(color: any, index: any) {
         }
         chunks[i].setAttribute("style", style);
     }
+    methodChange(1, true)
 }
 
 const widthChange = (val: any) => {
     panWidth.value = val.target.value;
-    emits("brushChange", { lineWidth: panWidth.value});
+    emits("brushChange", { lineWidth: panWidth.value });
 };
 
-const methodChange = (val: any) => {
-    buttonHover.value = val;
-    console.log();
-    emits("methodChange", val);
+const methodChange = (val: any, isChange?: boolean) => {
+    if (!isChange && val === buttonHover.value) {
+        buttonHover.value = 0;
+    } else {
+        buttonHover.value = val;
+    }
+    emits("methodChange", buttonHover.value);
 };
 </script>
 
@@ -98,7 +116,10 @@ const methodChange = (val: any) => {
     .text-box {
         margin-top: 10px;
     }
-    .image-box{
+
+    .image-box,
+    .rectangle-box,
+    .round-box {
         margin-top: 10px;
     }
 }
@@ -124,7 +145,8 @@ const methodChange = (val: any) => {
         justify-content: center;
     }
 }
+
 .button-clicked {
-  background: var(--button-hover-background);
+    background: var(--button-hover-background);
 }
 </style>

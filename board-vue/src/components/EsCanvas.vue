@@ -11,13 +11,13 @@ import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
 import { onMounted, reactive, ref, nextTick } from "vue";
 import { ctxFormat } from "./ExCanvas/EsCanvas";
-import { draw, drawInput, DrawInfo, BrushPath, TextPath, ImagePath } from "./ExCanvas/Brush";
+import { draw, drawInput, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath } from "./ExCanvas/Brush";
 
 let mouseButtonDown = false;
 let canvas: any;
 let ctx: any;
 let textInputShow = reactive({ value: false });
-let drawMethod = reactive({ value: 1 });
+let drawMethod = reactive({ value: 0 });
 let textInputRef = ref(null);
 
 // 配置信息
@@ -103,25 +103,62 @@ function handleMouseDown(event: any) {
       data: ImageInfo
     }
     draw(drawInfo, ctx);
+  } else if (drawMethod.value === 4) {
+    mouseButtonDown = true;
+    pointerInfo = {
+      x: event.pageX,
+      y: event.pageY
+    }
+  } else if (drawMethod.value === 5) {
+    mouseButtonDown = true;
+    pointerInfo = {
+      x: event.pageX,
+      y: event.pageY
+    }
   }
 }
 function handleMouseMove(event: any) {
   if (mouseButtonDown) {
-    pathInfo = {
-      beginX: pathInfo.lastX,
-      beginY: pathInfo.lastY,
-      lastX: event.pageX,
-      lastY: event.pageY,
-      strokeStyle: ctxInfo.strokeStyle,
-      lineWidth: ctxInfo.lineWidth,
-    };
-    let drawInfo: DrawInfo = {
-      type: 'brush',
-      data: pathInfo
+    if (drawMethod.value === 1) {
+      pathInfo = {
+        beginX: pathInfo.lastX,
+        beginY: pathInfo.lastY,
+        lastX: event.pageX,
+        lastY: event.pageY,
+        strokeStyle: ctxInfo.strokeStyle,
+        lineWidth: ctxInfo.lineWidth,
+      };
+      let drawInfo: DrawInfo = {
+        type: 'brush',
+        data: pathInfo
+      }
+      draw(drawInfo, ctx);
+      // 记录历史信息
+      lineArr.push(drawInfo);
+    } else if (drawMethod.value === 4) {
+      let RectInfo: RectPath = {
+        x: pointerInfo.x,
+        y: pointerInfo.y,
+        width: event.pageX - pointerInfo.x,
+        height: event.pageY - pointerInfo.y,
+      }
+      let drawInfo: DrawInfo = {
+        type: 'rect',
+        data: RectInfo,
+      }
+      draw(drawInfo, ctx);
+    } else if (drawMethod.value === 5) {
+      let RoundInfo: RoundPath = {
+        x: (parseFloat(pointerInfo.x) + parseFloat(event.x)) / 2,
+        y: (parseFloat(pointerInfo.y) + parseFloat(event.y)) / 2,
+        radus: Math.min(Math.abs(parseFloat(pointerInfo.x) - parseFloat(event.x)) / 2, Math.abs(parseFloat(pointerInfo.y) - parseFloat(event.y)) / 2),
+      }
+      let drawInfo: DrawInfo = {
+        type: 'round',
+        data: RoundInfo
+      }
+      draw(drawInfo, ctx);
     }
-    draw(drawInfo, ctx);
-    // 记录历史信息
-    lineArr.push(drawInfo);
   }
 }
 function handleMouseUp() {
