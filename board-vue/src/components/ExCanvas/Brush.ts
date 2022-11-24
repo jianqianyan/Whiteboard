@@ -1,7 +1,7 @@
 // 绘制数据接口
 export interface DrawInfo {
   type: string,
-  data: BrushPath | TextPath | ImagePath | RectPath | RoundPath,
+  data: BrushPath | TextPath | ImagePath | RectPath | RoundPath | Array<BrushPath>,
   checked?: boolean,
 }
 // Brush 数据类型接口
@@ -45,6 +45,28 @@ export interface RoundPath {
   y: any,
   radus: any,
 }
+
+// 绘制路径数组
+export function drawArr(infoArr: Array<DrawInfo>, useCtx: any) {
+  try {
+    infoArr.map(item => {
+      if (item.type === 'brush') {
+        (item.data as Array<BrushPath>).map(brushItem => {
+          let drawpath: DrawInfo = {
+            type: item.type,
+            data: brushItem,
+          }
+          draw(drawpath, useCtx);
+        })
+      } else {
+        draw(item, useCtx);
+      }
+    })
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 // 绘制动作
 export function draw(info: DrawInfo, useCtx: any) {
   try {

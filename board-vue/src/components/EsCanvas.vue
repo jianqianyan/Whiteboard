@@ -11,7 +11,7 @@ import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
 import { onMounted, reactive, ref, nextTick } from "vue";
 import { ctxFormat } from "./ExCanvas/EsCanvas";
-import { draw, drawInput, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath } from "./ExCanvas/Brush";
+import { draw, drawInput, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath } from "./ExCanvas/Brush";
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -61,12 +61,12 @@ let colorConfig: any = ref({
   ],
 });
 
-// 保存当前这次的绘制路径
-let lineArr: Array<DrawInfo> = [];
+// 保存当前这次的手绘路径
+let lineArr: Array<BrushPath> = [];
 
 // 用于保存历史路径
 // 保存绘制路径
-let pathArr: Array<Array<DrawInfo> | DrawInfo> = [];
+let pathArr: Array<DrawInfo> = [];
 
 function handleMouseDown(event: any) {
   if (drawMethod.value === 1) {
@@ -102,6 +102,7 @@ function handleMouseDown(event: any) {
       type: 'image',
       data: ImageInfo
     }
+    pathArr.push(drawInfo);
     draw(drawInfo, ctx);
   } else if (drawMethod.value === 4) {
     mouseButtonDown = true;
@@ -134,7 +135,7 @@ function handleMouseMove(event: any) {
       }
       draw(drawInfo, ctx);
       // 记录历史信息
-      lineArr.push(drawInfo);
+      lineArr.push(pathInfo);
     } else if (drawMethod.value === 4) {
       let RectInfo: RectPath = {
         x: pointerInfo.x,
@@ -162,15 +163,23 @@ function handleMouseMove(event: any) {
   }
 }
 function handleMouseUp() {
-  pathArr.push(lineArr);
-  mouseButtonDown = false;
-  pathInfo = {
-    lastX: null,
-    lastY: null,
-    beginY: null,
-    beginX: null,
-  };
-  lineArr = [];
+  if (mouseButtonDown) {
+    mouseButtonDown = false;
+    if (drawMethod.value === 1) {
+      let drawInfo: DrawInfo = {
+        type: 'brush',
+        data: lineArr,
+      }
+      pathArr.push(drawInfo);
+      pathInfo = {
+        lastX: null,
+        lastY: null,
+        beginY: null,
+        beginX: null,
+      };
+      lineArr = [];
+    }
+  }
 }
 
 // 触发操作按钮
@@ -181,15 +190,7 @@ const operationClick = (val: any) => {
     pathArr.pop();
     let rect = canvas!.getBoundingClientRect();
     ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
-    pathArr.map(item => {
-      if (Array.isArray(item)) {
-        item.map(path => {
-          draw(path, ctx);
-        })
-      } else {
-        draw(item, ctx)
-      }
-    })
+    drawArr(pathArr, ctx);
   }
 };
 
