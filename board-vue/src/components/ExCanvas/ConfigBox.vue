@@ -1,5 +1,9 @@
 <template>
     <div class="config-box">
+        <div class="round-box button-style" @click="methodChange(0)"
+            :class="{ 'button-clicked': buttonHover.value === 0 }">
+            <svg-icon iconName="icon-zhizhen" :color="buttonColor(0)"></svg-icon>
+        </div>
         <div class="brush-box">
             <el-popover :width="280" placement="right" trigger="click">
                 <template #reference>
@@ -65,8 +69,8 @@ let colorList = config.value.colorList || [
 let buttonHover = reactive({ value: 0 });
 let buttonColor = function (number: number) {
     let root = document.querySelector(":root");
-    let buttonColor = getComputedStyle(root as Element).getPropertyValue('--button-color');
-    let buttonHoverColor = getComputedStyle(root as Element).getPropertyValue('--button-hover-color');
+    let buttonColor = getComputedStyle(root as Element).getPropertyValue('--button-color') || '#FFF';
+    let buttonHoverColor = getComputedStyle(root as Element).getPropertyValue('--button-hover-color') || '#000000';
     return buttonHover.value === number ? buttonHoverColor : buttonColor;
 }
 
@@ -113,10 +117,8 @@ const methodChange = (val: any, isChange?: boolean) => {
     left: 40px;
     z-index: 15;
 
-    .text-box {
-        margin-top: 10px;
-    }
-
+    .text-box,
+    .brush-box,
     .image-box,
     .rectangle-box,
     .round-box {

@@ -1,7 +1,7 @@
 
 interface ctxFormat {
     lineWidth: number,
-    strokeStyle: String,
+    strokeStyle: string,
 }
 
 export type { ctxFormat }

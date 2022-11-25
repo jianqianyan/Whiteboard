@@ -12,6 +12,7 @@ import textInput from "./ExCanvas/textInput.vue";
 import { onMounted, reactive, ref, nextTick } from "vue";
 import { ctxFormat } from "./ExCanvas/EsCanvas";
 import { draw, drawInput, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath } from "./ExCanvas/Brush";
+import { checkClick } from '../tools/checkClick'
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -61,8 +62,12 @@ let colorConfig: any = ref({
   ],
 });
 
-// 保存当前这次的手绘路径
+// 保存当前这次的手绘路径 以及范围
 let lineArr: Array<BrushPath> = [];
+let lineMinX: any = null,
+  lineMinY: any = null,
+  lineMaxX: any = null,
+  lineMaxY: any = null;
 
 // 用于保存历史路径
 // 保存绘制路径
@@ -100,7 +105,11 @@ function handleMouseDown(event: any) {
     }
     let drawInfo: DrawInfo = {
       type: 'image',
-      data: ImageInfo
+      data: ImageInfo,
+      x: pointerInfo.x,
+      y: pointerInfo.y,
+      width: 100,
+      height: 100,
     }
     pathArr.push(drawInfo);
     draw(drawInfo, ctx);
@@ -110,14 +119,32 @@ function handleMouseDown(event: any) {
       x: event.pageX,
       y: event.pageY
     }
+    let drawInfo: DrawInfo = {
+      type: 'null',
+      data: null,
+    }
+    pathArr.push(drawInfo);
   } else if (drawMethod.value === 5) {
     mouseButtonDown = true;
     pointerInfo = {
       x: event.pageX,
       y: event.pageY
     }
+    let drawInfo: DrawInfo = {
+      type: 'null',
+      data: null,
+    }
+    pathArr.push(drawInfo);
+  } else if (drawMethod.value === 0) {
+    let beClick = checkClick(pathArr, event.pageX, event.pageY);
+    for (let i = 0; i < pathArr.length; ++i)
+      pathArr[i].checked = false;
+    if (beClick !== -1)
+      pathArr[beClick].checked = true;
+    drawArr(pathArr, ctx, canvas);
   }
 }
+
 function handleMouseMove(event: any) {
   if (mouseButtonDown) {
     if (drawMethod.value === 1) {
@@ -133,6 +160,10 @@ function handleMouseMove(event: any) {
         type: 'brush',
         data: pathInfo
       }
+      lineMaxX = lineMaxX === null ? event.pageX : Math.max(event.pageX as number, lineMaxX as number);
+      lineMaxY = lineMaxY === null ? event.pageY : Math.max(event.pageY as number, lineMaxY as number);
+      lineMinX = lineMinX === null ? event.pageX : Math.min(event.pageX as number, lineMinX as number);
+      lineMinY = lineMinY === null ? event.pageX : Math.min(event.pageY as number, lineMinY as number);
       draw(drawInfo, ctx);
       // 记录历史信息
       lineArr.push(pathInfo);
@@ -146,8 +177,14 @@ function handleMouseMove(event: any) {
       let drawInfo: DrawInfo = {
         type: 'rect',
         data: RectInfo,
+        x: pointerInfo.x,
+        y: pointerInfo.y,
+        width: event.pageX - pointerInfo.x,
+        height: event.pageY - pointerInfo.y,
       }
-      draw(drawInfo, ctx);
+      pathArr.pop();
+      pathArr.push(drawInfo);
+      drawArr(pathArr, ctx, canvas);
     } else if (drawMethod.value === 5) {
       let RoundInfo: RoundPath = {
         x: (parseFloat(pointerInfo.x) + parseFloat(event.x)) / 2,
@@ -156,12 +193,19 @@ function handleMouseMove(event: any) {
       }
       let drawInfo: DrawInfo = {
         type: 'round',
-        data: RoundInfo
+        data: RoundInfo,
+        x: RoundInfo.x - RoundInfo.radus,
+        y: RoundInfo.y - RoundInfo.radus,
+        height: 2 * RoundInfo.radus,
+        width: 2 * RoundInfo.radus
       }
-      draw(drawInfo, ctx);
+      pathArr.pop();
+      pathArr.push(drawInfo);
+      drawArr(pathArr, ctx, canvas);
     }
   }
 }
+
 function handleMouseUp() {
   if (mouseButtonDown) {
     mouseButtonDown = false;
@@ -169,6 +213,10 @@ function handleMouseUp() {
       let drawInfo: DrawInfo = {
         type: 'brush',
         data: lineArr,
+        x: lineMinX,
+        y: lineMinY,
+        width: lineMaxX - lineMinX,
+        height: lineMaxY - lineMinY
       }
       pathArr.push(drawInfo);
       pathInfo = {
@@ -177,7 +225,15 @@ function handleMouseUp() {
         beginY: null,
         beginX: null,
       };
+      lineMinX = null;
+      lineMinY = null;
+      lineMaxX = null;
+      lineMaxY = null;
       lineArr = [];
+    }
+    // 将点击插入的空信息删除
+    while (pathArr.length && pathArr[pathArr.length - 1].type === 'null') {
+      pathArr.pop();
     }
   }
 }
@@ -188,9 +244,7 @@ const operationClick = (val: any) => {
   if (val === "revoke") {
     if (pathArr.length === 0) return;
     pathArr.pop();
-    let rect = canvas!.getBoundingClientRect();
-    ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
-    drawArr(pathArr, ctx);
+    drawArr(pathArr, ctx, canvas);
   }
 };
 
@@ -221,7 +275,7 @@ const textEntry = (val: any) => {
   };
   let drawInfo: DrawInfo = {
     type: 'text',
-    data: TextInfo
+    data: TextInfo,
   }
   draw(drawInfo, ctx);
   pathArr.push(drawInfo);
