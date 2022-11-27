@@ -63,13 +63,12 @@ export function drawArr(infoArr: Array<DrawInfo>, useCtx: any, canvas: any) {
       else
         draw(item, useCtx);
       // 绘制被选中的笔迹
-      if (item.checked) {
-        if (item.type === 'text') {
-        } else {
-          useCtx.save();
-          drawBeClick(item, useCtx);
-          useCtx.restore();
-        }
+      if (!item.checked) return;
+      if (item.type === 'text') {
+      } else {
+        useCtx.save();
+        drawBeClick(item, useCtx);
+        useCtx.restore();
       }
     })
   } catch (err) {
@@ -81,16 +80,27 @@ export function drawArr(infoArr: Array<DrawInfo>, useCtx: any, canvas: any) {
 export function draw(info: DrawInfo, useCtx: any) {
   try {
     useCtx.save();
-    if (info.type === 'brush') {
-      drawBrush(info.data as BrushPath, useCtx);
-    } else if (info.type === 'text') {
-      drawText(info.data as TextPath, useCtx);
-    } else if (info.type === 'image') {
-      drawImage(info.data as ImagePath, useCtx);
-    } else if (info.type === 'rect') {
-      drawRect(info.data as RectPath, useCtx);
-    } else if (info.type === 'round') {
-      drawRound(info.data as RoundPath, useCtx);
+    switch (info.type) {
+      case 'brush': {
+        drawBrush(info.data as BrushPath, useCtx);
+        break;
+      }
+      case 'text': {
+        drawText(info.data as TextPath, useCtx);
+        break;
+      }
+      case 'image': {
+        drawImage(info.data as ImagePath, useCtx);
+        break;
+      }
+      case 'rect': {
+        drawRect(info.data as RectPath, useCtx);
+        break;
+      }
+      case 'round': {
+        drawRound(info.data as RoundPath, useCtx);
+        break;
+      }
     }
     useCtx.restore();
   } catch (err) {
@@ -106,17 +116,16 @@ export function drawInput(Info: any, input: any) {
 
 // brush 类型绘制
 function drawBrush(path: BrushPath, useCtx: any) {
-  if (path.beginX !== null && path.beginY !== null && useCtx) {
-    const { lastX, lastY, beginX, beginY, strokeStyle, lineWidth } = path;
-    useCtx.beginPath();
-    useCtx.lineCap = "round";
-    useCtx.strokeStyle = strokeStyle || "black";
-    useCtx.lineWidth = lineWidth || 3;
-    useCtx.moveTo(beginX, beginY);
-    useCtx.lineTo(lastX, lastY);
-    useCtx.stroke();
-    useCtx.closePath();
-  }
+  if (path.beginX == null || path.beginY === null || !useCtx) return;
+  const { lastX, lastY, beginX, beginY, strokeStyle, lineWidth } = path;
+  useCtx.beginPath();
+  useCtx.lineCap = "round";
+  useCtx.strokeStyle = strokeStyle || "black";
+  useCtx.lineWidth = lineWidth || 3;
+  useCtx.moveTo(beginX, beginY);
+  useCtx.lineTo(lastX, lastY);
+  useCtx.stroke();
+  useCtx.closePath();
 }
 // text 类型绘制
 function drawText(path: TextPath, useCtx: any) {
