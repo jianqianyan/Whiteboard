@@ -2,7 +2,7 @@
   <canvas className="canvas" id="drawCanvas"></canvas>
   <OperationBox @operationEmits="operationClick"></OperationBox>
   <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig"></configBox>
-  <textInput @textEntry="textEntry" v-if="textInputShow.value"></textInput>
+  <textInput @textEntry="textEntry" v-show="textInputShow.value"></textInput>
 </template>
 
 <script setup lang="ts">
@@ -11,7 +11,7 @@ import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
 import { onMounted, reactive, ref, nextTick } from "vue";
 import { ctxFormat } from "./ExCanvas/EsCanvas";
-import { draw, drawInput, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath } from "./ExCanvas/Brush";
+import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath } from "./ExCanvas/Brush";
 import { checkClick } from '../tools/checkClick'
 
 let mouseButtonDown = false;
@@ -86,13 +86,17 @@ function handleMouseDown(event: any) {
       }
       pointerInfo = {
         x: event.pageX,
-        y: event.pageY - 26,
+        y: event.pageY - 20,
       };
       textInputShow.value = true;
       nextTick(() => {
         let input = document.querySelector(".text-input");
+        let inputbody = document.getElementById('input-body');
         let path = "left: " + pointerInfo.x + "px;" + "top: " + pointerInfo.y + "px;";
         (input as Element).setAttribute("style", path);
+        setTimeout(() => {
+          inputbody?.focus();
+        },100)
       });
       break;
     }
@@ -274,7 +278,7 @@ const textEntry = (val: any) => {
     fontColor: ctxInfo.strokeStyle,
     text: val,
     x: pointerInfo.x,
-    y: pointerInfo.y + 20,
+    y: pointerInfo.y + 27,
   };
   let drawInfo: DrawInfo = {
     type: 'text',
