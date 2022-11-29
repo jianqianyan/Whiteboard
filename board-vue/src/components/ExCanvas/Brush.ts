@@ -108,6 +108,24 @@ export function draw(info: DrawInfo, useCtx: any) {
   }
 }
 
+// 笔迹移动
+export function moveDraw(moveX: number, moveY: number, moveBrush: any) {
+  if (moveBrush.type === 'brush') {
+    moveBrush.data.map((item: any) => {
+      item.beginX = item.beginX === null ? null : item.beginX + moveX;
+      item.beginY = item.beginY === null ? null : item.beginY + moveY;
+      item.lastX += moveX;
+      item.lastY += moveY;
+    })
+  } else {
+    moveBrush.data.x += moveX;
+    moveBrush.data.y += moveY;
+  }
+  moveBrush.x += moveX;
+  moveBrush.y += moveY;
+  return moveBrush;
+}
+
 // 绘制 text 的input
 export function drawInput(Info: any, input: any) {
   let path = "left: " + Info.x + "px;" + "top: " + Info.y + "px;";

@@ -11,7 +11,7 @@ import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
 import { onMounted, reactive, ref, nextTick } from "vue";
 import { ctxFormat } from "./ExCanvas/EsCanvas";
-import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath } from "./ExCanvas/Brush";
+import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath, moveDraw } from "./ExCanvas/Brush";
 import { checkClick } from '../tools/checkClick'
 
 let mouseButtonDown = false;
@@ -135,6 +135,8 @@ function handleMouseDown(event: any) {
     }
     case 0: {
       let beClick = checkClick(pathArr, event.pageX, event.pageY);
+      pointerInfo.x = event.pageX;
+      pointerInfo.y = event.pageY;
       for (let i = 0; i < pathArr.length; ++i)
         pathArr[i].checked = false;
       if (beClick !== -1)
@@ -208,6 +210,18 @@ function handleMouseMove(event: any) {
       pathArr.push(drawInfo);
       drawArr(pathArr, ctx, canvas);
       break
+    }
+    case 0: {
+      let moveX = event.pageX - pointerInfo.x;
+      let moveY = event.pageY - pointerInfo.y;
+      pointerInfo.x = event.pageX;
+      pointerInfo.y = event.pageY;
+      for (let i = 0; i < pathArr.length; ++i) {
+        if (pathArr[i].checked) {
+          pathArr[i] = moveDraw(moveX, moveY, pathArr[i]);
+        }
+      }
+      drawArr(pathArr, ctx, canvas);
     }
   }
 }
