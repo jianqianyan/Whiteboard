@@ -31,6 +31,7 @@ const inputChange = (val: any) => {
     padding: 0;
     margin: 0;
     border: none;
+    background: rgba(0, 0, 0, 0%);
   }
 }
 </style>

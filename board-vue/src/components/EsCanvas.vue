@@ -3,13 +3,15 @@
   <OperationBox @operationEmits="operationClick"></OperationBox>
   <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig"></configBox>
   <textInput @textEntry="textEntry" v-show="textInputShow.value"></textInput>
+  <ImgUp :imgupVisble="imgupVisble"></ImgUp>
 </template>
 
 <script setup lang="ts">
 import OperationBox from "./ExCanvas/OperationBox.vue";
 import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
-import { onMounted, reactive, ref, nextTick } from "vue";
+import ImgUp from "./ExCanvas/ImgUp.vue";
+import { onMounted, reactive, ref, nextTick, computed } from "vue";
 import { ctxFormat } from "./ExCanvas/EsCanvas";
 import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath, moveDraw } from "./ExCanvas/Brush";
 import { checkClick } from '../tools/checkClick'
@@ -19,6 +21,10 @@ let canvas: any;
 let ctx: any;
 let textInputShow = reactive({ value: false });
 let drawMethod = reactive({ value: 0 });
+let beclicked = -1;
+let imgupVisble = computed(() => {
+  return drawMethod.value === 3;
+})
 
 // 配置信息
 // 默认笔刷格式
@@ -96,7 +102,7 @@ function handleMouseDown(event: any) {
         (input as Element).setAttribute("style", path);
         setTimeout(() => {
           inputbody?.focus();
-        },100)
+        }, 100)
       });
       break;
     }
@@ -134,14 +140,19 @@ function handleMouseDown(event: any) {
       break;
     }
     case 0: {
-      let beClick = checkClick(pathArr, event.pageX, event.pageY);
+      beclicked = checkClick(pathArr, event.pageX, event.pageY);
       pointerInfo.x = event.pageX;
       pointerInfo.y = event.pageY;
-      for (let i = 0; i < pathArr.length; ++i)
-        pathArr[i].checked = false;
-      if (beClick !== -1)
-        pathArr[beClick].checked = true;
-      drawArr(pathArr, ctx, canvas);
+      for (let i = 0; i < pathArr.length; ++i) {
+        if (pathArr[i].checked) {
+          pathArr[i].checked = false;
+          drawArr(pathArr, ctx, canvas);
+        }
+      }
+      if (beclicked !== -1) {
+        pathArr[beclicked].checked = true;
+        drawArr(pathArr, ctx, canvas);
+      }
       break;
     }
   }
@@ -212,6 +223,7 @@ function handleMouseMove(event: any) {
       break
     }
     case 0: {
+      if (beclicked === -1) return;
       let moveX = event.pageX - pointerInfo.x;
       let moveY = event.pageY - pointerInfo.y;
       pointerInfo.x = event.pageX;
@@ -297,10 +309,19 @@ const textEntry = (val: any) => {
   let drawInfo: DrawInfo = {
     type: 'text',
     data: TextInfo,
+    x: pointerInfo.x,
+    y: pointerInfo.y + 27,
   }
+  ctx.font = TextInfo.fontWidth + " " + TextInfo.fontFamily;
   draw(drawInfo, ctx);
+  ctx.save();
+  let textMsg = ctx.measureText(val);
+  drawInfo.width = textMsg.width;
+  drawInfo.height = textMsg.actualBoundingBoxAscent + textMsg.actualBoundingBoxDescent;
+  drawInfo.y = (drawInfo.y as number) - (drawInfo.height as number);
   pathArr.push(drawInfo);
   textInputShow.value = false;
+  ctx.stroke();
 };
 
 onMounted(() => {

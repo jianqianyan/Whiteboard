@@ -64,12 +64,9 @@ export function drawArr(infoArr: Array<DrawInfo>, useCtx: any, canvas: any) {
         draw(item, useCtx);
       // 绘制被选中的笔迹
       if (!item.checked) return;
-      if (item.type === 'text') {
-      } else {
-        useCtx.save();
-        drawBeClick(item, useCtx);
-        useCtx.restore();
-      }
+      useCtx.save();
+      drawBeClick(item, useCtx);
+      useCtx.restore();
     })
   } catch (err) {
     console.log(err);

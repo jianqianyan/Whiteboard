@@ -3,9 +3,9 @@
     <el-dialog
       v-model="dialogVisible"
       width="250"
-      :close-on-click-modal="falsec"
-      :close-on-press-escape="falsec"
-      :show-close="falsec"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
       align-center
     >
       <template #header>
@@ -32,7 +32,6 @@ import { ref } from "vue";
 import logo from '../../assets/png/logo.jpg'
 
 const dialogVisible = ref(false);
-const falsec = ref(false);
 </script>
 
 <style scoped lang="less">
