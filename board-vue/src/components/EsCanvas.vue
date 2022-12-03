@@ -3,7 +3,7 @@
   <OperationBox @operationEmits="operationClick"></OperationBox>
   <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig"></configBox>
   <textInput @textEntry="textEntry" v-show="textInputShow.value"></textInput>
-  <ImgUp :imgupVisble="imgupVisble"></ImgUp>
+  <ImgUp :imgupVisble="imgupVisble" @imgUpload="imgUpload"></ImgUp>
 </template>
 
 <script setup lang="ts">
@@ -107,23 +107,6 @@ function handleMouseDown(event: any) {
       break;
     }
     case 3: {
-      let ImageInfo: ImagePath = {
-        x: event.pageX,
-        y: event.pageY,
-        src: "http://localhost:3000/public/image/1.jpg",
-        width: 100,
-        height: 100
-      };
-      let drawInfo: DrawInfo = {
-        type: 'image',
-        data: ImageInfo,
-        x: event.pageX,
-        y: event.pageY,
-        width: 100,
-        height: 100,
-      }
-      pathArr.push(drawInfo);
-      draw(drawInfo, ctx);
       break;
     }
     case 4:
@@ -297,6 +280,7 @@ const methodChange = (val: any) => {
   textInputShow.value = false;
 };
 
+// 文字输入
 const textEntry = (val: any) => {
   let TextInfo: TextPath = {
     fontWidth: "20px",
@@ -323,6 +307,27 @@ const textEntry = (val: any) => {
   textInputShow.value = false;
   ctx.stroke();
 };
+
+// 图片上传结束
+const imgUpload = (val: any) => {
+  let ImageInfo: ImagePath = {
+    x: 200,
+    y: 200,
+    src: val.src.value,
+    width: 100,
+    height: 100
+  };
+  let drawInfo: DrawInfo = {
+    type: 'image',
+    data: ImageInfo,
+    x: 200,
+    y: 200,
+    width: 100,
+    height: 100,
+  }
+  pathArr.push(drawInfo);
+  draw(drawInfo, ctx);
+}
 
 onMounted(() => {
   canvas = document.querySelector("#drawCanvas");
