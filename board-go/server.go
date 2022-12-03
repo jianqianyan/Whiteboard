@@ -2,19 +2,20 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"path"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jianqianyan/Whiteboard/board-go/controller"
+	"github.com/jianqianyan/Whiteboard/board-go/dao"
+	"github.com/jianqianyan/Whiteboard/board-go/repository"
 )
 
 func main() {
+	Init("ywg", "ywg123456", "120.26.83.87:3306", "try")
 	//go run ./board-go/server.go
 	r := gin.Default()
-	// r.GET("/upload", func(c *gin.Context) {
-	// 	c.Redirect(http.StatusMovedPermanently, "https://www.baidu.com/")
-	// 	// c.HTML(http.StatusOK, "fileUpload.html", nil)
-	// })
 
 	r.POST("/upload", func(c *gin.Context) {
 		// 获取上传文件信息
@@ -37,5 +38,29 @@ func main() {
 			})
 		}
 	})
+	r.POST("/updata", func(c *gin.Context) {
+		var body dao.Body
+		if err := c.ShouldBind(&body); err != nil {
+			if controller.ReleasePost(body) != nil {
+				c.JSON(-1, gin.H{
+					"msg": "请求失败！ ",
+				})
+				fmt.Println(err)
+			} else {
+				c.JSON(200, gin.H{
+					"msg": "请求成功！ ",
+				})
+			}
+		} else {
+			log.Fatal(err)
+		}
+	})
 	r.Run(":8080")
+}
+
+func Init(userName string, userPwd string, dbAddr string, dbName string) error {
+	if err := repository.Init("ywg", "ywg123456", "120.26.83.87:3306", "try"); err != nil {
+		return err
+	}
+	return nil
 }

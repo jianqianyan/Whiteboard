@@ -8,16 +8,18 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init(userName string, userPwd string, dbUrl string, dbPost string, dbName string) error {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True",
+var db *gorm.DB
+
+func Init(userName string, userPwd string, dbAddr string, dbName string) error {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True",
 		userName,
 		userPwd,
-		dbUrl,
-		dbPost,
+		dbAddr,
 		dbName)
-
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	db.Create(&User{}) //先放着
+	if db.Migrator().HasTable(&Chirography{}) == false {
+		db.Migrator().CreateTable(&Chirography{})
+	}
 	if err != nil {
 		panic("连接数据库失败, error=" + err.Error())
 	}

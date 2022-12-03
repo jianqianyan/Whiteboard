@@ -3,14 +3,16 @@ package repository
 import "time"
 
 type Chirography struct {
-	UserId   int64
-	BoardId  int64
-	Type     string
-	Hash     string
-	Data     string
+	Type     string  //笔刷类型
+	Data     string  //笔刷数据
+	X        float32 //数据的左上角x坐标
+	Y        float32 //数据的左上角y坐标
+	Width    float32 //笔刷数据的宽
+	Height   float32 //笔刷数据的高
 	CreateAt time.Time
-	X        float32
-	Y        float32
-	Width    float32
-	Height   float32
+}
+
+func (f *Chirography) AddChirography() error {
+	db.Create(f)
+	return nil
 }
