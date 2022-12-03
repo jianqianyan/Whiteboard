@@ -1,6 +1,6 @@
 <template>
     <div class="img-up">
-        <el-dialog v-model="visable" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+        <el-dialog v-model="visable" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" width="450px">
             <template #header>
                 <div class="login-header">
                     上传图片
