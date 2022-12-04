@@ -1,11 +1,12 @@
 package dao
 
-type Body struct {
-	Data    string
-	UserId  int64
-	BoradId int64
-}
+import (
+	"time"
 
-func (f *Body) Do() error {
-	return nil
+	"github.com/jianqianyan/Whiteboard/board-go/repository"
+)
+
+type Body struct {
+	Data repository.Chirography
+	Time time.Time
 }

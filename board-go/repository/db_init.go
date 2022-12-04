@@ -16,7 +16,8 @@ func Init(userName string, userPwd string, dbAddr string, dbName string) error {
 		userPwd,
 		dbAddr,
 		dbName)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	var err error
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if db.Migrator().HasTable(&Chirography{}) == false {
 		db.Migrator().CreateTable(&Chirography{})
 	}

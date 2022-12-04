@@ -9,7 +9,6 @@ func ReleasePost(body dao.Body) error {
 	return NewReleasePost(body).AddChirography()
 }
 func NewReleasePost(body dao.Body) *repository.Chirography {
-	return &repository.Chirography{
-		Data: body.Data,
-	}
+	body.Data.CreatedTime = body.Time
+	return &body.Data
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"path"
 
@@ -41,25 +40,20 @@ func main() {
 	r.POST("/updata", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
-			if controller.ReleasePost(body) != nil {
-				c.JSON(-1, gin.H{
-					"msg": "请求失败！ ",
-				})
-				fmt.Println(err)
-			} else {
-				c.JSON(200, gin.H{
-					"msg": "请求成功！ ",
-				})
-			}
-		} else {
-			log.Fatal(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
+		if err := controller.ReleasePost(body); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			// 服务器出错
+		}
+		c.JSON(http.StatusOK, gin.H{"statuse": "请求成功！ "})
 	})
 	r.Run(":8080")
 }
 
 func Init(userName string, userPwd string, dbAddr string, dbName string) error {
-	if err := repository.Init("ywg", "ywg123456", "120.26.83.87:3306", "try"); err != nil {
+	if err := repository.Init(userName, userPwd, dbAddr, dbName); err != nil {
 		return err
 	}
 	return nil
