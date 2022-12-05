@@ -15,6 +15,7 @@ import { onMounted, reactive, ref, nextTick, computed } from "vue";
 import { ctxFormat } from "./ExCanvas/EsCanvas";
 import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath, moveDraw } from "./ExCanvas/Brush";
 import { checkClick } from '../tools/checkClick'
+import { brushAdd } from "./onlineFunctions";
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -22,6 +23,9 @@ let ctx: any;
 let textInputShow = reactive({ value: false });
 let drawMethod = reactive({ value: 0 });
 let beclicked = -1;
+let userId = "1";
+let boardId = "1";
+let baseBrushId = "U" + userId + "B" + boardId + "T";
 let imgupVisble = computed(() => {
   return drawMethod.value === 3;
 })
@@ -115,9 +119,14 @@ function handleMouseDown(event: any) {
         x: event.pageX,
         y: event.pageY
       }
+      let nowDate = new Date();
+      let nowTime = nowDate.getTime();
       let drawInfo: DrawInfo = {
         type: 'null',
         data: null,
+        brushId: baseBrushId + nowTime,
+        userId: userId,
+        boardId: boardId,
       }
       pathArr.push(drawInfo);
       break;
@@ -153,9 +162,14 @@ function handleMouseMove(event: any) {
         strokeStyle: ctxInfo.strokeStyle,
         lineWidth: ctxInfo.lineWidth,
       };
+      let nowDate = new Date();
+      let nowTime = nowDate.getTime();
       let drawInfo: DrawInfo = {
         type: 'brush',
-        data: pathInfo
+        data: pathInfo,
+        brushId: baseBrushId + nowTime,
+        userId: userId,
+        boardId: boardId,
       }
       lineMaxX = lineMaxX === null ? event.pageX : Math.max(event.pageX as number, lineMaxX as number);
       lineMaxY = lineMaxY === null ? event.pageY : Math.max(event.pageY as number, lineMaxY as number);
@@ -173,6 +187,8 @@ function handleMouseMove(event: any) {
         width: event.pageX - pointerInfo.x,
         height: event.pageY - pointerInfo.y,
       }
+      let nowDate = new Date();
+      let nowTime = nowDate.getTime();
       let drawInfo: DrawInfo = {
         type: 'rect',
         data: RectInfo,
@@ -180,6 +196,9 @@ function handleMouseMove(event: any) {
         y: pointerInfo.y,
         width: event.pageX - pointerInfo.x,
         height: event.pageY - pointerInfo.y,
+        brushId: baseBrushId + nowTime,
+        userId: userId,
+        boardId: boardId,
       }
       pathArr.pop();
       pathArr.push(drawInfo);
@@ -192,13 +211,18 @@ function handleMouseMove(event: any) {
         y: (parseFloat(pointerInfo.y) + parseFloat(event.y)) / 2,
         radus: Math.min(Math.abs(parseFloat(pointerInfo.x) - parseFloat(event.x)) / 2, Math.abs(parseFloat(pointerInfo.y) - parseFloat(event.y)) / 2),
       }
+      let nowDate = new Date();
+      let nowTime = nowDate.getTime();
       let drawInfo: DrawInfo = {
         type: 'round',
         data: RoundInfo,
         x: RoundInfo.x - RoundInfo.radus,
         y: RoundInfo.y - RoundInfo.radus,
         height: 2 * RoundInfo.radus,
-        width: 2 * RoundInfo.radus
+        width: 2 * RoundInfo.radus,
+        brushId: baseBrushId + nowTime,
+        userId: userId,
+        boardId: boardId,
       }
       pathArr.pop();
       pathArr.push(drawInfo);
@@ -226,15 +250,23 @@ function handleMouseUp() {
   mouseButtonDown = false;
   switch (drawMethod.value) {
     case 1: {
+      let nowDate = new Date();
+      let nowTime = nowDate.getTime();
       let drawInfo: DrawInfo = {
         type: 'brush',
         data: lineArr,
         x: lineMinX,
         y: lineMinY,
         width: lineMaxX - lineMinX,
-        height: lineMaxY - lineMinY
+        height: lineMaxY - lineMinY,
+        brushId: baseBrushId + nowTime,
+        userId: userId,
+        boardId: boardId,
       }
       pathArr.push(drawInfo);
+      drawInfo.data = JSON.stringify(drawInfo.data);
+      brushAdd(drawInfo);
+
       pathInfo = {
         lastX: null,
         lastY: null,
@@ -290,11 +322,16 @@ const textEntry = (val: any) => {
     x: pointerInfo.x,
     y: pointerInfo.y + 27,
   };
+  let nowDate = new Date();
+  let nowTime = nowDate.getTime();
   let drawInfo: DrawInfo = {
     type: 'text',
     data: TextInfo,
     x: pointerInfo.x,
     y: pointerInfo.y + 27,
+    brushId: baseBrushId + nowTime,
+    userId: userId,
+    boardId: boardId,
   }
   ctx.font = TextInfo.fontWidth + " " + TextInfo.fontFamily;
   draw(drawInfo, ctx);
@@ -306,6 +343,8 @@ const textEntry = (val: any) => {
   pathArr.push(drawInfo);
   textInputShow.value = false;
   ctx.stroke();
+  drawInfo.data = JSON.stringify(drawInfo.data);
+  brushAdd(drawInfo);
 };
 
 // 图片上传结束
@@ -317,6 +356,8 @@ const imgUpload = (val: any) => {
     width: 100,
     height: 100
   };
+  let nowDate = new Date();
+  let nowTime = nowDate.getTime();
   let drawInfo: DrawInfo = {
     type: 'image',
     data: ImageInfo,
@@ -324,6 +365,9 @@ const imgUpload = (val: any) => {
     y: 200,
     width: 100,
     height: 100,
+    brushId: baseBrushId + nowTime,
+    userId: userId,
+    boardId: boardId,
   }
   pathArr.push(drawInfo);
   draw(drawInfo, ctx);

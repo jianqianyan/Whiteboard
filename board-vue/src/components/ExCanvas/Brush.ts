@@ -1,12 +1,15 @@
 // 绘制数据接口
 export interface DrawInfo {
   type: string,
-  data: BrushPath | TextPath | ImagePath | RectPath | RoundPath | Array<BrushPath> | null,
+  data: BrushPath | TextPath | ImagePath | RectPath | RoundPath | Array<BrushPath> | string | null,
   checked?: boolean,
   x?: number,
   y?: number,
   width?: number,
   height?: number,
+  boardId: string,
+  brushId: string,
+  userId: string,
 }
 // Brush 数据类型接口
 export interface BrushPath {
@@ -59,7 +62,15 @@ export function drawArr(infoArr: Array<DrawInfo>, useCtx: any, canvas: any) {
   try {
     infoArr.map(item => {
       if (item.type === 'brush')
-        (item.data as Array<BrushPath>).map(brushItem => draw({ type: item.type, data: brushItem }, useCtx));
+        (item.data as Array<BrushPath>).map(
+          brushItem =>
+            draw({
+              type: item.type,
+              data: brushItem,
+              brushId: item.brushId,
+              boardId: item.boardId,
+              userId: item.userId
+            }, useCtx));
       else
         draw(item, useCtx);
       // 绘制被选中的笔迹

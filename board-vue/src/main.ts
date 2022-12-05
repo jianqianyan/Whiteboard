@@ -4,6 +4,7 @@ import App from './App.vue';
 import i18n from './i18n';
 import './assets/svg/iconfont.js'
 import './style/base.less'
+import axios from './plugin/axios/axiosInstance';
 
 const app = createApp(App);
 import { setupSvgIcon } from './plugin/SvgIcon/index'
@@ -14,4 +15,5 @@ setupSvgIcon(app)
 
 app.use(i18n)
 app.use(ElementPlus)
+app.config.globalProperties.$axios = axios;
 app.mount('#app');
