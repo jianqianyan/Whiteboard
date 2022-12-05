@@ -51,9 +51,6 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "请求成功！ "})
 	}) //上传笔刷数据
 	r.POST("/update", func(c *gin.Context) {
-
-	}) //更新笔刷数据
-	r.POST("/delete", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -65,6 +62,9 @@ func main() {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "更新成功！ "})
+	}) //更新笔刷数据
+	r.POST("/delete", func(c *gin.Context) {
+
 	}) //删除笔刷数据
 	r.POST("/recall", func(c *gin.Context) {
 
