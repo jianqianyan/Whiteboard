@@ -5,6 +5,6 @@ import (
 	"github.com/jianqianyan/Whiteboard/board-go/service"
 )
 
-func ReleasePost(body dao.Body) error {
-	return service.ReleasePost(body)
+func ReleaseCreate(body dao.Body) error {
+	return service.ReleaseCreate(body)
 }

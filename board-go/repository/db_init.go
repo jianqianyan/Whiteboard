@@ -18,11 +18,14 @@ func Init(userName string, userPwd string, dbAddr string, dbName string) error {
 		dbName)
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic("连接数据库失败, error=" + err.Error())
+	}
 	if db.Migrator().HasTable(&Chirography{}) == false {
 		db.Migrator().CreateTable(&Chirography{})
 	}
-	if err != nil {
-		panic("连接数据库失败, error=" + err.Error())
+	if db.Migrator().HasTable(&BrushTop{}) == false {
+		db.Migrator().CreateTable(&BrushTop{})
 	}
 	return nil
 }

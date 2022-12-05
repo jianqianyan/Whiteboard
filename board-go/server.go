@@ -37,18 +37,38 @@ func main() {
 			})
 		}
 	})
-	r.POST("/updata", func(c *gin.Context) {
+	r.POST("/create", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		if err := controller.ReleasePost(body); err != nil {
+		if err := controller.ReleaseCreate(body); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			// 服务器出错
+			return
 		}
-		c.JSON(http.StatusOK, gin.H{"statuse": "请求成功！ "})
-	})
+		c.JSON(http.StatusOK, gin.H{"message": "请求成功！ "})
+	}) //上传笔刷数据
+	r.POST("/update", func(c *gin.Context) {
+
+	}) //更新笔刷数据
+	r.POST("/delete", func(c *gin.Context) {
+		var body dao.Body
+		if err := c.ShouldBind(&body); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		if err := controller.ReleaseUpdate(body); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			// 服务器出错
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "更新成功！ "})
+	}) //删除笔刷数据
+	r.POST("/recall", func(c *gin.Context) {
+
+	}) //撤回上一步
 	r.Run(":8080")
 }
 
