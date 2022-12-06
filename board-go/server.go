@@ -37,22 +37,21 @@ func main() {
 			})
 		}
 	})
+	//上传笔刷数据
 	r.POST("/brushAdd", func(c *gin.Context) {
 		var body dao.Body
-		println("Yescccccccccccccccccc")
 		if err := c.ShouldBind(&body); err != nil {
-			println("NO1cccccccc")
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": "400"})
 			return
 		}
 		if err := controller.ReleaseCreate(body); err != nil {
-			println("NO2cccccccc")
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": "400"})
 			// 服务器出错
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "请求成功！ ", "status": "200"})
-	}) //上传笔刷数据
+	})
+	//更新笔刷数据
 	r.POST("/update", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
@@ -65,13 +64,15 @@ func main() {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "更新成功！ ", "status": "200"})
-	}) //更新笔刷数据
+	})
+	//删除笔刷数据
 	r.POST("/delete", func(c *gin.Context) {
 
-	}) //删除笔刷数据
+	})
+	//撤回上一步
 	r.POST("/recall", func(c *gin.Context) {
 
-	}) //撤回上一步
+	})
 	r.Run(":8080")
 }
 
