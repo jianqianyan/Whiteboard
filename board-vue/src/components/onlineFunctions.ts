@@ -10,7 +10,7 @@ export function brushAdd(drawInfo: DrawInfo,) {
         Time: sqlTime(),
     };
     API({
-        url: '/create',
+        url: '/brushAdd',
         method: 'post',
         data: body,
     }).then(res => {
