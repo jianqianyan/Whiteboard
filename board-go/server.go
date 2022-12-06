@@ -42,29 +42,29 @@ func main() {
 		println("Yescccccccccccccccccc")
 		if err := c.ShouldBind(&body); err != nil {
 			println("NO1cccccccc")
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": "400"})
 			return
 		}
 		if err := controller.ReleaseCreate(body); err != nil {
 			println("NO2cccccccc")
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": "400"})
 			// 服务器出错
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "请求成功！ "})
+		c.JSON(http.StatusOK, gin.H{"message": "请求成功！ ", "status": "200"})
 	}) //上传笔刷数据
 	r.POST("/update", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "status": "400"})
 			return
 		}
 		if err := controller.ReleaseUpdate(body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "status": "400"})
 			// 服务器出错
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "更新成功！ "})
+		c.JSON(http.StatusOK, gin.H{"message": "更新成功！ ", "status": "200"})
 	}) //更新笔刷数据
 	r.POST("/delete", func(c *gin.Context) {
 
