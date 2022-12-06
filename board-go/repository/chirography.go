@@ -20,24 +20,20 @@ type Chirography struct {
 }
 
 func CreateChirography(f *Chirography) error {
+	var err error
+	if err, _ = checkBrushTop(f, "create"); err != nil {
+		return err
+	}
 	resultCreate := db.Create(f)
 	if resultCreate.Error != nil {
 		return resultCreate.Error
-	}
-	var eg BrushTop
-	result := db.Where("BrushId = ?", f.BrushId).First(&eg)
-	if result.Error != nil {
-		return result.Error
-	}
-	if result.RowsAffected != 0 {
-		return errors.New("BrushId=" + f.BrushId + " 的数据已存在！")
 	}
 	return CreatedBrushTop(f.BrushId, f.CreatedTime)
 }
 func UpdateChirography(f *Chirography) error {
 	var eg BrushTop
 	var err error
-	if err, eg = checkBrushTop(f); err != nil {
+	if err, eg = checkBrushTop(f, "update"); err != nil {
 		return err
 	}
 	resultCreate := db.Create(f)
@@ -46,17 +42,20 @@ func UpdateChirography(f *Chirography) error {
 	}
 	return UpdateBrushTop(f.CreatedTime, eg)
 }
-func checkBrushTop(f *Chirography) (error, BrushTop) {
+func checkBrushTop(f *Chirography, Type string) (error, BrushTop) {
 	var eg BrushTop
-	result := db.Where("BrushId = ?", f.BrushId).First(&eg)
+	result := db.Where("BrushId = ?", f.BrushId).Find(&eg)
 	if result.Error != nil {
 		return result.Error, eg
 	}
-	if result.RowsAffected == 0 {
+	if Type == "update" && eg.isDeleted == true {
+		return errors.New("BrushId=" + f.BrushId + " 的数据已被删除！"), eg
+	}
+	if Type == "update" && result.RowsAffected == 0 {
 		return errors.New("BrushId=" + f.BrushId + " 的数据不存在！ "), eg
 	}
-	if eg.isDeleted == true {
-		return errors.New("BrushId=" + f.BrushId + " 的数据已被删除！"), eg
+	if Type == "create" && result.RowsAffected != 0 {
+		return errors.New("BrushId=" + f.BrushId + " 的数据已存在！ "), eg
 	}
 	return nil, eg
 }

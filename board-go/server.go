@@ -37,14 +37,17 @@ func main() {
 			})
 		}
 	})
-	r.POST("/create", func(c *gin.Context) {
+	r.POST("/brushAdd", func(c *gin.Context) {
 		var body dao.Body
+		println("Yescccccccccccccccccc")
 		if err := c.ShouldBind(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			println("NO1cccccccc")
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
 		if err := controller.ReleaseCreate(body); err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			println("NO2cccccccc")
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			// 服务器出错
 			return
 		}
@@ -57,7 +60,7 @@ func main() {
 			return
 		}
 		if err := controller.ReleaseUpdate(body); err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			// 服务器出错
 			return
 		}
