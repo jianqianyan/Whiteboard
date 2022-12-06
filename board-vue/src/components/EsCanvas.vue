@@ -248,6 +248,10 @@ function handleMouseMove(event: any) {
 function handleMouseUp() {
   if (!mouseButtonDown) return;
   mouseButtonDown = false;
+  // 将点击插入的空信息删除
+  while (pathArr.length && pathArr[pathArr.length - 1].type === 'null') {
+    pathArr.pop();
+  }
   switch (drawMethod.value) {
     case 1: {
       let nowDate = new Date();
@@ -264,7 +268,6 @@ function handleMouseUp() {
         boardId: boardId,
       }
       pathArr.push(drawInfo);
-      drawInfo.data = JSON.stringify(drawInfo.data);
       brushAdd(drawInfo);
 
       pathInfo = {
@@ -280,10 +283,9 @@ function handleMouseUp() {
       lineArr = [];
       break;
     }
-  }
-  // 将点击插入的空信息删除
-  while (pathArr.length && pathArr[pathArr.length - 1].type === 'null') {
-    pathArr.pop();
+    case 4: case 5: {
+      brushAdd(pathArr[pathArr.length - 1]);
+    }
   }
 }
 
@@ -343,7 +345,6 @@ const textEntry = (val: any) => {
   pathArr.push(drawInfo);
   textInputShow.value = false;
   ctx.stroke();
-  drawInfo.data = JSON.stringify(drawInfo.data);
   brushAdd(drawInfo);
 };
 
@@ -371,6 +372,7 @@ const imgUpload = (val: any) => {
   }
   pathArr.push(drawInfo);
   draw(drawInfo, ctx);
+  brushAdd(drawInfo);
 }
 
 onMounted(() => {
