@@ -6,6 +6,6 @@ import (
 	"github.com/jianqianyan/Whiteboard/board-go/service"
 )
 
-func ReleaseCreate(body dao.Body) (error, repository.Status) {
-	return service.ReleaseCreate(body)
+func ReleaseDelete(body dao.Body) (error, repository.Status) {
+	return service.ReleaseDelete(body)
 }
