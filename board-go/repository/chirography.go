@@ -44,7 +44,7 @@ func UpdateChirography(f *Chirography) error {
 }
 func checkBrushTop(f *Chirography, Type string) (error, BrushTop) {
 	var eg BrushTop
-	result := db.Where("BrushId = ?", f.BrushId).Find(&eg)
+	result := db.Where("brush_id = ?", f.BrushId).Find(&eg)
 	if result.Error != nil {
 		return result.Error, eg
 	}
