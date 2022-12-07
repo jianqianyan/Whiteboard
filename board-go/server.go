@@ -53,7 +53,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "请求成功！ ", "status": 200})
 	})
 	//更新笔刷数据
-	r.POST("/update", func(c *gin.Context) {
+	r.POST("/brushUpdate", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": errors.New("参数获取失败"), "status": "400"})
@@ -66,7 +66,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "更新成功！ ", "status": 200})
 	})
 	//删除笔刷数据
-	r.POST("/delete", func(c *gin.Context) {
+	r.POST("/brushDelete", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": errors.New("参数获取失败"), "status": "400"})
@@ -79,7 +79,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "删除成功！ ", "status": 200})
 	})
 	//撤回上一步
-	r.POST("/recall", func(c *gin.Context) {
+	r.POST("/brushRecall", func(c *gin.Context) {
 		if err, status := controller.ReleaseRecall(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "status": status})
 			return
