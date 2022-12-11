@@ -1,5 +1,6 @@
 <template>
   <canvas className="canvas" id="drawCanvas"></canvas>
+  <canvas className="paintingCanvas" id="paintingCanvas" v-if="isPainting"></canvas>
   <OperationBox @operationEmits="operationClick"></OperationBox>
   <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig"></configBox>
   <textInput @textEntry="textEntry" v-show="textInputShow.value"></textInput>
@@ -12,19 +13,21 @@ import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
 import ImgUp from "./ExCanvas/ImgUp.vue";
 import { onMounted, reactive, ref, nextTick, computed } from "vue";
-import { ctxFormat } from "./ExCanvas/EsCanvas";
+import { canvasInit, ctxFormat } from "./ExCanvas/EsCanvas";
 import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath, moveDraw } from "./ExCanvas/Brush";
 import { checkClick } from '../tools/checkClick'
 import { brushAdd } from "./onlineFunctions";
 
 let mouseButtonDown = false;
 let canvas: any;
+let paintingCanvas: any;
 let ctx: any;
 let textInputShow = reactive({ value: false });
 let drawMethod = reactive({ value: 0 });
 let beclicked = -1;
 let userId = "1";
 let boardId = "1";
+let isPainting = ref(false);
 let baseBrushId = "U" + userId + "B" + boardId + "T";
 let imgupVisble = computed(() => {
   return drawMethod.value === 3;
@@ -378,14 +381,7 @@ const imgUpload = (val: any) => {
 onMounted(() => {
   canvas = document.querySelector("#drawCanvas");
   if (!canvas) return;
-  let dpr = window.devicePixelRatio || 1;
-  canvas.width = document.body.clientWidth * dpr;
-  canvas.height = (document.body.clientHeight - 20) * dpr;
-  canvas.style.width = document.body.clientWidth + "px";
-  canvas.style.height = document.body.clientHeight - 20 + "px";
-
-  ctx = canvas.getContext("2d");
-  ctx.scale(dpr, dpr);
+  ctx = canvasInit(canvas);
   mouseButtonDown = false;
   if (window.PointerEvent) {
     canvas.addEventListener("pointerdown", handleMouseDown, false);
@@ -401,7 +397,15 @@ onMounted(() => {
 
 <style scoped>
 .canvas {
-  width: 100vw;
-  height: 100vh;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
+.paintingCanvas {
+  z-index: 15;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>
