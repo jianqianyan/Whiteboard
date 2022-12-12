@@ -61,23 +61,9 @@ export function drawArr(infoArr: Array<DrawInfo>, useCtx: any, canvas: any) {
   useCtx.clearRect(rect.x, rect.y, rect.width, rect.height);
   try {
     infoArr.map(item => {
-      if (item.type === 'brush')
-        (item.data as Array<BrushPath>).map(
-          brushItem =>
-            draw({
-              type: item.type,
-              data: brushItem,
-              brushId: item.brushId,
-              boardId: item.boardId,
-              userId: item.userId
-            }, useCtx));
-      else
-        draw(item, useCtx);
+      if (item.checked) return;
+      draw(item, useCtx);
       // 绘制被选中的笔迹
-      if (!item.checked) return;
-      useCtx.save();
-      drawBeClick(item, useCtx);
-      useCtx.restore();
     })
   } catch (err) {
     console.log(err);
@@ -90,7 +76,15 @@ export function draw(info: DrawInfo, useCtx: any) {
     useCtx.save();
     switch (info.type) {
       case 'brush': {
-        drawBrush(info.data as BrushPath, useCtx);
+        if (Array.isArray(info.data)) {
+          (info.data as Array<BrushPath>).map(
+            brushItem => {
+              drawBrush(brushItem, useCtx);
+            }
+          )
+        } else {
+          drawBrush(info.data as BrushPath, useCtx);
+        }
         break;
       }
       case 'text': {
@@ -193,7 +187,9 @@ function drawRound(path: RoundPath, useCtx: any) {
 }
 
 // 绘制被选中框
-function drawBeClick(path: DrawInfo, useCtx: any) {
+export function drawBeClick(path: DrawInfo, useCtx: any) {
+  draw(path, useCtx);
+  useCtx.save();
   let x = path.width as number > 0 ? path.x as number - 10 : path.x as number + 10;
   let y = path.height as number > 0 ? path.y as number - 10 : path.y as number + 10;
   let width = path.width as number > 0 ? path.width as number + 20 : path.width as number - 20;
@@ -204,4 +200,5 @@ function drawBeClick(path: DrawInfo, useCtx: any) {
   useCtx.beginPath();
   useCtx.rect(x, y, width, height);
   useCtx.stroke();
+  useCtx.restore();
 }

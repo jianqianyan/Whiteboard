@@ -14,7 +14,7 @@ import textInput from "./ExCanvas/textInput.vue";
 import ImgUp from "./ExCanvas/ImgUp.vue";
 import { onMounted, reactive, ref, nextTick, computed } from "vue";
 import { canvasInit, ctxFormat } from "./ExCanvas/EsCanvas";
-import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath, moveDraw } from "./ExCanvas/Brush";
+import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath, moveDraw, drawBeClick } from "./ExCanvas/Brush";
 import { checkClick } from '../tools/checkClick'
 import { brushAdd } from "./onlineFunctions";
 
@@ -22,6 +22,7 @@ let mouseButtonDown = false;
 let canvas: any;
 let paintingCanvas: any;
 let ctx: any;
+let paintingCtx: any;
 let textInputShow = reactive({ value: false });
 let drawMethod = reactive({ value: 0 });
 let beclicked = -1;
@@ -84,6 +85,7 @@ let lineMinX: any = null,
 // 用于保存历史路径
 // 保存绘制路径
 let pathArr: Array<DrawInfo> = [];
+let paintingPath: DrawInfo;
 
 function handleMouseDown(event: any) {
   mouseButtonDown = true;
@@ -147,6 +149,17 @@ function handleMouseDown(event: any) {
       if (beclicked !== -1) {
         pathArr[beclicked].checked = true;
         drawArr(pathArr, ctx, canvas);
+        paintingPath = pathArr[beclicked];
+        isPainting.value = true;
+        nextTick(() => {
+          let newCanvas: any = canvasInit('#paintingCanvas');
+          paintingCanvas = newCanvas.canvas;
+          paintingCtx = newCanvas.ctx;
+          drawBeClick(paintingPath, paintingCtx);
+        })
+      } else {
+        drawArr(pathArr, ctx, canvas);
+        isPainting.value = false;
       }
       break;
     }
@@ -379,18 +392,20 @@ const imgUpload = (val: any) => {
 }
 
 onMounted(() => {
-  canvas = document.querySelector("#drawCanvas");
+  let newCanvas: any = canvasInit('#drawCanvas');
+  let body: any = document.querySelector('body');
+  canvas = newCanvas.canvas;
+  ctx = newCanvas.ctx;
   if (!canvas) return;
-  ctx = canvasInit(canvas);
   mouseButtonDown = false;
   if (window.PointerEvent) {
-    canvas.addEventListener("pointerdown", handleMouseDown, false);
-    canvas.addEventListener("pointermove", handleMouseMove, false);
-    canvas.addEventListener("pointerup", handleMouseUp, false);
+    body.addEventListener("pointerdown", handleMouseDown, false);
+    body.addEventListener("pointermove", handleMouseMove, false);
+    body.addEventListener("pointerup", handleMouseUp, false);
   } else {
-    canvas.addEventListener("mousedown", handleMouseDown, false);
-    canvas.addEventListener("mousemove", handleMouseMove, false);
-    canvas.addEventListener("mouseup", handleMouseUp, false);
+    body.addEventListener("mousedown", handleMouseDown, false);
+    body.addEventListener("mousemove", handleMouseMove, false);
+    body.addEventListener("mouseup", handleMouseUp, false);
   }
 });
 </script>
