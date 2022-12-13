@@ -14,7 +14,7 @@ import textInput from "./ExCanvas/textInput.vue";
 import ImgUp from "./ExCanvas/ImgUp.vue";
 import { onMounted, reactive, ref, nextTick, computed } from "vue";
 import { canvasInit, ctxFormat } from "./ExCanvas/EsCanvas";
-import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath, moveDraw, drawBeClick } from "./ExCanvas/Brush";
+import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, RoundPath, moveDraw, drawBeClick, drawPainting } from "./ExCanvas/Brush";
 import { checkClick } from '../tools/checkClick'
 import { brushAdd } from "./onlineFunctions";
 
@@ -134,33 +134,37 @@ function handleMouseDown(event: any) {
         boardId: boardId,
       }
       pathArr.push(drawInfo);
+      isPainting.value = true;
+      nextTick(() => {
+          let newCanvas: any = canvasInit('#paintingCanvas');
+          paintingCanvas = newCanvas.canvas;
+          paintingCtx = newCanvas.ctx;
+        })
       break;
     }
     case 0: {
+      let lastClick = beclicked;
+      isPainting.value = false;
       beclicked = checkClick(pathArr, event.pageX, event.pageY);
       pointerInfo.x = event.pageX;
       pointerInfo.y = event.pageY;
       for (let i = 0; i < pathArr.length; ++i) {
-        if (pathArr[i].checked) {
-          pathArr[i].checked = false;
-          drawArr(pathArr, ctx, canvas);
-        }
+        pathArr[i].checked = false;
       }
       if (beclicked !== -1) {
         pathArr[beclicked].checked = true;
-        drawArr(pathArr, ctx, canvas);
         paintingPath = pathArr[beclicked];
         isPainting.value = true;
         nextTick(() => {
           let newCanvas: any = canvasInit('#paintingCanvas');
           paintingCanvas = newCanvas.canvas;
           paintingCtx = newCanvas.ctx;
-          drawBeClick(paintingPath, paintingCtx);
+          drawBeClick(paintingPath, paintingCtx, paintingCanvas);
         })
       } else {
-        drawArr(pathArr, ctx, canvas);
-        isPainting.value = false;
+        if (lastClick === -1) return;
       }
+      drawArr(pathArr, ctx, canvas);
       break;
     }
   }
@@ -218,7 +222,7 @@ function handleMouseMove(event: any) {
       }
       pathArr.pop();
       pathArr.push(drawInfo);
-      drawArr(pathArr, ctx, canvas);
+      drawPainting(pathArr[pathArr.length - 1], paintingCtx, paintingCanvas);
       break;
     }
     case 5: {
@@ -242,7 +246,7 @@ function handleMouseMove(event: any) {
       }
       pathArr.pop();
       pathArr.push(drawInfo);
-      drawArr(pathArr, ctx, canvas);
+      drawPainting(pathArr[pathArr.length - 1], paintingCtx, paintingCanvas);
       break
     }
     case 0: {
@@ -254,9 +258,10 @@ function handleMouseMove(event: any) {
       for (let i = 0; i < pathArr.length; ++i) {
         if (pathArr[i].checked) {
           pathArr[i] = moveDraw(moveX, moveY, pathArr[i]);
+          drawBeClick(pathArr[i], paintingCtx, paintingCanvas);
+          break;
         }
       }
-      drawArr(pathArr, ctx, canvas);
     }
   }
 }
@@ -301,6 +306,7 @@ function handleMouseUp() {
     }
     case 4: case 5: {
       brushAdd(pathArr[pathArr.length - 1]);
+      drawArr(pathArr, ctx, canvas);
     }
   }
 }

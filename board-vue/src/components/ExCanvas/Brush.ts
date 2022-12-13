@@ -186,8 +186,10 @@ function drawRound(path: RoundPath, useCtx: any) {
   useCtx.stroke();
 }
 
-// 绘制被选中框
-export function drawBeClick(path: DrawInfo, useCtx: any) {
+// 绘制被选中的到绘制层
+export function drawBeClick(path: DrawInfo, useCtx: any, canvas: any) {
+  let rect = canvas!.getBoundingClientRect();
+  useCtx.clearRect(rect.x, rect.y, rect.width, rect.height);
   draw(path, useCtx);
   useCtx.save();
   let x = path.width as number > 0 ? path.x as number - 10 : path.x as number + 10;
@@ -201,4 +203,10 @@ export function drawBeClick(path: DrawInfo, useCtx: any) {
   useCtx.rect(x, y, width, height);
   useCtx.stroke();
   useCtx.restore();
+}
+
+export function drawPainting(path: DrawInfo, useCtx: any, canvas: any) {
+  let rect = canvas!.getBoundingClientRect();
+  useCtx.clearRect(rect.x, rect.y, rect.width, rect.height);
+  draw(path, useCtx);
 }

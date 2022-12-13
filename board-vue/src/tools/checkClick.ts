@@ -1,4 +1,4 @@
-import { draw, DrawInfo } from "../components/ExCanvas/Brush";
+import { DrawInfo } from "../components/ExCanvas/Brush";
 export function checkClick(drawArr: Array<DrawInfo>, pointX: string | number, pointY: string | number) {
     for (let i = 0; i < drawArr.length; ++i) {
         let drawX = drawArr[i].x as number, drawY = drawArr[i].y as number;
