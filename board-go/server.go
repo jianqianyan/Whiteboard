@@ -87,8 +87,9 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "撤回成功！ ", "status": 200})
 	})
 	//获取笔刷数据
-	r.GET("/brushGet", func(c *gin.Context) {
+	r.GET("/boardInit", func(c *gin.Context) {
 		boardId := c.Query("boardId")
+		println(boardId)
 		data := controller.QueryBrushInfo(boardId)
 		c.JSON(http.StatusOK, data)
 	})
