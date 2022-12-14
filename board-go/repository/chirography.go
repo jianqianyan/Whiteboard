@@ -2,26 +2,72 @@ package repository
 
 import (
 	"errors"
+	"sync"
 	"time"
 
 	"gorm.io/gorm"
 )
 
-type Status int16
+type Status int64
 type Chirography struct {
-	BrushId     string  `gorm:"primaryKey"` //笔刷数据id
-	Type        string  //笔刷类型
-	Data        string  //笔刷数据
-	X           float32 //数据的左上角x坐标
-	Y           float32 //数据的左上角y坐标
-	Width       float32 //笔刷数据的宽
-	Height      float32 //笔刷数据的高
-	UserId      string  //用户id
-	BoardId     string  //白板id
-	IsDeleted   bool    `gorm:"default:false"` //内部判断是否已经删除
-	CreatedTime time.Time
+	BrushId     string    //笔刷数据id
+	Type        string    //笔刷类型
+	Data        string    //笔刷数据
+	X           float32   //数据的左上角x坐标
+	Y           float32   //数据的左上角y坐标
+	Width       float32   //笔刷数据的宽
+	Height      float32   //笔刷数据的高
+	UserId      string    //用户id
+	BoardId     string    `gorm:"Index:idx_boardid"` //白板id
+	IsDeleted   bool      `gorm:"default:false"`     //内部判断是否已经删除
+	CreatedTime time.Time `gorm:"primaryKey"`
+}
+type ChirographyDao struct {
 }
 
+var (
+	chirographyDao  *ChirographyDao
+	chirographyList []*Chirography
+	chirographyOnce sync.Once
+)
+
+func NewChirographyDaoInstance() *ChirographyDao {
+	chirographyOnce.Do(func() {
+		chirographyDao = &ChirographyDao{}
+	})
+	return chirographyDao
+}
+
+var wg sync.WaitGroup
+var sem = make(chan int, 1)
+
+func (*ChirographyDao) QueryChirographyByBoardId(boardId string) (error, Status, []*Chirography) {
+	var err error
+	var status Status
+	var eg []BrushTop
+
+	if err, status, eg = FindBrushTopByBoardId(boardId); err != nil {
+		return err, status, nil
+	}
+	wg.Add(len(eg))
+	for _, f := range eg {
+		go FindChirographyByCreatedTime(f.BrushId)
+	}
+	wg.Wait()
+	return nil, 200, chirographyList
+}
+
+func FindChirographyByCreatedTime(created_time string) {
+	defer wg.Done()
+	var chirography *Chirography
+	result := db.Where("created_time = ?", created_time).Find(chirography)
+	if result.Error != nil || result.RowsAffected == 0 {
+		return
+	}
+	sem <- 1
+	chirographyList = append(chirographyList, chirography)
+	<-sem
+}
 func CreateChirographyTable(f *Chirography) (error, Status) {
 	resultCreate := db.Create(f)
 	if resultCreate.Error != nil {
@@ -45,7 +91,7 @@ func CreateChirography(f *Chirography) (error, Status) {
 	if err, status := CreateChirographyTable(f); err != nil {
 		return err, status
 	}
-	return CreatedBrushTop(f.BrushId, f.CreatedTime)
+	return CreatedBrushTop(f.BrushId, f.BoardId, f.CreatedTime)
 }
 func UpdateChirography(f *Chirography) (error, Status) {
 	var eg BrushTop
@@ -98,26 +144,9 @@ func RecalChirography() (error, Status) {
 		}
 		return nil, 200
 	}
-	_, _, eg := FindBrushTop(chirographyTwo.BrushId)
+	_, _, eg := FindBrushTopByBrushId(chirographyTwo.BrushId)
 	if err, status := UpdateBrushTop(chirographyTwo.CreatedTime, chirographyTwo.IsDeleted, eg); err != nil {
 		return err, status
 	}
 	return nil, 200
-}
-func checkBrushTop(f *Chirography, Type string) (error, Status, BrushTop) {
-	var eg BrushTop
-	result := db.Where("brush_id = ?", f.BrushId).Find(&eg)
-	if result.Error != nil {
-		return errors.New("数据库查询失败"), 503, eg
-	}
-	if (Type == "update" || Type == "delete") && eg.IsDeleted == true {
-		return errors.New("brushId=" + f.BrushId + " 的数据已被删除！"), 404, eg
-	}
-	if (Type == "update" || Type == "delete") && result.RowsAffected == 0 {
-		return errors.New("brushId=" + f.BrushId + " 的数据不存在！ "), 403, eg
-	}
-	if Type == "create" && result.RowsAffected != 0 {
-		return errors.New("brushId=" + f.BrushId + " 的数据已存在！ "), 402, eg
-	}
-	return nil, 200, eg
 }

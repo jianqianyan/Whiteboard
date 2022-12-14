@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"path"
@@ -42,7 +41,8 @@ func main() {
 	r.POST("/brushAdd", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": errors.New("参数获取失败"), "status": 400})
+			fmt.Println(err)
+			c.JSON(http.StatusBadRequest, gin.H{"message": "参数获取失败", "status": 400})
 			return
 		}
 		if err, status := controller.ReleaseCreate(body); err != nil {
@@ -56,7 +56,7 @@ func main() {
 	r.POST("/brushUpdate", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": errors.New("参数获取失败"), "status": "400"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "参数获取失败", "status": "400"})
 			return
 		}
 		if err, status := controller.ReleaseUpdate(body); err != nil {
@@ -69,7 +69,7 @@ func main() {
 	r.POST("/brushDelete", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": errors.New("参数获取失败"), "status": "400"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "参数获取失败", "status": "400"})
 			return
 		}
 		if err, status := controller.ReleaseDelete(body); err != nil {
@@ -84,7 +84,13 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "status": status})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "删除成功！ ", "status": 200})
+		c.JSON(http.StatusOK, gin.H{"message": "撤回成功！ ", "status": 200})
+	})
+	//获取笔刷数据
+	r.GET("/brushGet", func(c *gin.Context) {
+		boardId := c.Query("boardId")
+		data := controller.QueryBrushInfo(boardId)
+		c.JSON(http.StatusOK, data)
 	})
 	r.Run(":8080")
 }

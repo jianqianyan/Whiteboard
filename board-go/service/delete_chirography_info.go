@@ -10,5 +10,8 @@ func ReleaseDelete(body dao.Body) (error, repository.Status) {
 	if err, status := checkParm(eg); err != nil {
 		return err, status
 	}
+	if err, status := repository.DeleteChirography(eg); err != nil {
+		return err, status
+	}
 	return nil, 200
 }
