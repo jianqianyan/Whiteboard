@@ -51,21 +51,22 @@ func (*ChirographyDao) QueryChirographyByBoardId(boardId string) (error, Status,
 	}
 	wg.Add(len(eg))
 	for _, f := range eg {
-		go FindChirographyByCreatedTime(f.BrushId)
+		// fmt.Println(f.CreatedTime.Format(time.RFC3339))
+		go FindChirographyByCreatedTime(f.CreatedTime)
 	}
 	wg.Wait()
 	return nil, 200, chirographyList
 }
 
-func FindChirographyByCreatedTime(created_time string) {
+func FindChirographyByCreatedTime(created_time time.Time) {
 	defer wg.Done()
-	var chirography *Chirography
-	result := db.Where("created_time = ?", created_time).Find(chirography)
+	var chirography Chirography
+	result := db.Where("created_time = ?", created_time).Find(&chirography)
 	if result.Error != nil || result.RowsAffected == 0 {
 		return
 	}
 	sem <- 1
-	chirographyList = append(chirographyList, chirography)
+	chirographyList = append(chirographyList, &chirography)
 	<-sem
 }
 func CreateChirographyTable(f *Chirography) (error, Status) {

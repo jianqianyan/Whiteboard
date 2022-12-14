@@ -30,7 +30,7 @@ func (f *QueryBrushInfoFlow) Do() (error, repository.Status, []*repository.Chiro
 
 func (f *QueryBrushInfoFlow) check() (error, repository.Status) {
 	if f.boardId == "" {
-		return errors.New("brushId参数不能为空! "), 601
+		return errors.New("boardId参数不能为空! "), 601
 	}
 	return nil, 200
 }

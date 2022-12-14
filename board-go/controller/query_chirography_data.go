@@ -1,6 +1,8 @@
 package controller
 
-import "github.com/jianqianyan/Whiteboard/board-go/service"
+import (
+	"github.com/jianqianyan/Whiteboard/board-go/service"
+)
 
 type BrushDate struct {
 	Code    int64       `json:"code"`
@@ -9,10 +11,14 @@ type BrushDate struct {
 }
 
 func QueryBrushInfo(board_id string) *BrushDate {
-	message, code, data := service.QueryBrushInfo(board_id)
+	var message = ""
+	err, code, data := service.QueryBrushInfo(board_id)
+	if err != nil {
+		message = err.Error()
+	}
 	return &BrushDate{
 		Code:    int64(code),
-		Message: message.Error(),
+		Message: message,
 		Data:    data,
 	}
 }
