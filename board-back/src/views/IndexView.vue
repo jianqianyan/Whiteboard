@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import IndexMenu from '@/components/IndexMenu.vue';
+import IndexMenu from "@/components/IndexMenu.vue";
 </script>
 
 <style scoped lang="less">
