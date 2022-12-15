@@ -27,5 +27,8 @@ func Init(userName string, userPwd string, dbAddr string, dbName string) error {
 	if db.Migrator().HasTable(&BrushTop{}) == false {
 		db.Migrator().CreateTable(&BrushTop{})
 	}
+	if db.Migrator().HasTable(&Board{}) == false {
+		db.Migrator().CreateTable(&Board{})
+	}
 	return nil
 }

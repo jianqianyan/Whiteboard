@@ -11,6 +11,8 @@ import (
 	"github.com/jianqianyan/Whiteboard/board-go/repository"
 )
 
+var Once = make(chan int, 1)
+
 func main() {
 	Init("ywg", "ywg123456", "120.26.83.87:3306", "try")
 	//go run ./board-go/server.go
@@ -56,11 +58,11 @@ func main() {
 	r.POST("/brushUpdate", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "参数获取失败", "status": "400"})
+			c.JSON(http.StatusBadRequest, gin.H{"message": "参数获取失败", "status": "400"})
 			return
 		}
 		if err, status := controller.ReleaseUpdate(body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "status": status})
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "更新成功！ ", "status": 200})
@@ -69,11 +71,11 @@ func main() {
 	r.POST("/brushDelete", func(c *gin.Context) {
 		var body dao.Body
 		if err := c.ShouldBind(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "参数获取失败", "status": "400"})
+			c.JSON(http.StatusBadRequest, gin.H{"message": "参数获取失败", "status": "400"})
 			return
 		}
 		if err, status := controller.ReleaseDelete(body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "status": status})
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "删除成功！ ", "status": 200})
@@ -81,7 +83,7 @@ func main() {
 	//撤回上一步
 	r.POST("/brushRecall", func(c *gin.Context) {
 		if err, status := controller.ReleaseRecall(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "status": status})
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "撤回成功！ ", "status": 200})
@@ -92,6 +94,19 @@ func main() {
 		println(boardId)
 		data := controller.QueryBrushInfo(boardId)
 		c.JSON(http.StatusOK, data)
+	})
+	//获取白板id
+	r.GET("/boardIdGet", func(c *gin.Context) {
+		userId := c.Query("userId")
+		println(userId)
+		Once <- 1
+		err, status, boardId := controller.ReleaseCreateBoardId(userId)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "boardId": boardId})
+			return
+		}
+		<-Once
+		c.JSON(http.StatusOK, gin.H{"message": "成功获取白板Id！ ", "status": 200, "boardId": boardId})
 	})
 	r.Run(":8080")
 }
