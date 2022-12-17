@@ -49,6 +49,7 @@ func (*ChirographyDao) QueryChirographyByBoardId(boardId string) (error, Status,
 	if err, status, eg = FindBrushTopByBoardId(boardId); err != nil {
 		return err, status, nil
 	}
+	chirographyList = nil
 	wg.Add(len(eg))
 	for _, f := range eg {
 		// fmt.Println(f.CreatedTime.Format(time.RFC3339))

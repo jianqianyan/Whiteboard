@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"math/rand"
 	"strconv"
 	"time"
@@ -37,6 +38,9 @@ type CreateBoardIdFlow struct {
 
 func (f *CreateBoardIdFlow) Do() (error, repository.Status, string) {
 	f.packBoardInfo()
+	if err, status := f.checkParm(); err != nil {
+		return err, status, ""
+	}
 	if err, status := repository.CreateBoard(f.board); err != nil {
 		return err, status, ""
 	}
@@ -47,4 +51,10 @@ func (f *CreateBoardIdFlow) packBoardInfo() {
 		UserId:  f.userId,
 		BoardId: f.boardId,
 	}
+}
+func (f *CreateBoardIdFlow) checkParm() (error, repository.Status) {
+	if f.userId == "" {
+		return errors.New("userId不能为空"), 406
+	}
+	return nil, 200
 }

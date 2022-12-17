@@ -91,14 +91,12 @@ func main() {
 	//获取笔刷数据
 	r.GET("/boardInit", func(c *gin.Context) {
 		boardId := c.Query("boardId")
-		println(boardId)
 		data := controller.QueryBrushInfo(boardId)
 		c.JSON(http.StatusOK, data)
 	})
 	//获取白板id
 	r.GET("/boardIdGet", func(c *gin.Context) {
 		userId := c.Query("userId")
-		println(userId)
 		Once <- 1
 		err, status, boardId := controller.ReleaseCreateBoardId(userId)
 		if err != nil {
