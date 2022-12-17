@@ -14,7 +14,7 @@ import (
 var Once = make(chan int, 1)
 
 func main() {
-	Init("ywg", "ywg123456", "120.26.83.87:3306", "try")
+	Init("root", "Ddnjfdbjasd1*1", "8.130.39.183:3306", "try")
 	//go run ./board-go/server.go
 	r := gin.Default()
 
