@@ -18,6 +18,7 @@ import { draw, drawArr, DrawInfo, BrushPath, TextPath, ImagePath, RectPath, Roun
 import { checkClick } from '../tools/checkClick'
 import { brushAdd } from "./onlineFunctions";
 import { timesTamp } from "../tools/generalTools";
+import API from "../plugin/axios/axiosInstance";
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -403,6 +404,18 @@ onMounted(() => {
     body.addEventListener("mousemove", handleMouseMove, false);
     body.addEventListener("mouseup", handleMouseUp, false);
   }
+  let apiBody = {
+    userId: userId,
+  };
+  API({
+    url: "/boardIdGet",
+    method: 'get',
+    data: apiBody,
+  }).then(res => {
+    if (res.status === 200) {
+      boardId = res.data.data;
+    }
+  })
 });
 </script>
 
