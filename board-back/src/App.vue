@@ -9,7 +9,7 @@ import { RouterView } from "vue-router";
 </template>
 
 <style scoped>
-.app{
+.app {
   height: 100vh;
   width: 100vw;
 }
