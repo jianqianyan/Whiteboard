@@ -21,7 +21,7 @@ func ReleaseCreateBoardId(userId string) (error, repository.Status, string) {
 	return NewCreateBoardIdFlow(userId).Do()
 }
 func NewCreateBoardIdFlow(user_id string) *CreateBoardIdFlow {
-	board_id := RandStringBytes(2) + time.Now().Format(time.RFC3339) + RandStringBytes(2)
+	board_id := RandStringBytes(2) + (string)(time.Now().Unix()) + RandStringBytes(2)
 	return &CreateBoardIdFlow{
 		userId:  user_id,
 		boardId: board_id,

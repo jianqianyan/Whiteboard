@@ -16,6 +16,7 @@ func Init(userName string, userPwd string, dbAddr string, dbName string) error {
 		userPwd,
 		dbAddr,
 		dbName)
+	println(dsn)
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

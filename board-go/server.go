@@ -106,7 +106,7 @@ func main() {
 			return
 		}
 		<-Once
-		c.JSON(http.StatusOK, gin.H{"message": "成功获取白板Id！ ", "status": 200, "boardId": boardId})
+		c.JSON(http.StatusOK, gin.H{"message": "成功获取白板Id！ ", "status": 200, "data": boardId})
 	})
 	r.Run(":8080")
 }
