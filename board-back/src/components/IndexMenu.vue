@@ -25,22 +25,20 @@ const menuList = [
 
 <style scoped lang="less">
 .menu {
-  max-width: 220px;
-  // background: red;
-  height: 100%;
-  border-right-width: 1px;
-  border-right-style: solid;
+  width: 220px;
+  box-shadow: 0 0.5rem 1rem 0 rgb(44 51 73 / 10%);
+  padding-top: 15px;
 }
 
 .menu-son {
-  height: 45px;
-  width: 100%;
-  // border-style: solid;
-  // border-width: 1px;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
+  // height: 45px;
+  // width: calc(100% - 10px);
+  border-bottom: 1px solid #edf1f7;
   display: flex;
-  justify-content: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5rem;
   align-items: center;
+  color: var(--font-color);
 }
 </style>
