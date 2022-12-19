@@ -10,17 +10,17 @@ import (
 
 type Status int64
 type Chirography struct {
-	BrushId     string    //笔刷数据id
-	Type        string    //笔刷类型
-	Data        string    //笔刷数据
-	X           float32   //数据的左上角x坐标
-	Y           float32   //数据的左上角y坐标
-	Width       float32   //笔刷数据的宽
-	Height      float32   //笔刷数据的高
-	UserId      string    //用户id
-	BoardId     string    `gorm:"Index:idx_boardid"` //白板id
-	IsDeleted   bool      `gorm:"default:false"`     //内部判断是否已经删除
-	CreatedTime time.Time `gorm:"primaryKey"`
+	BrushId     string    `json:"brushId"`                          //笔刷数据id
+	Type        string    `json:"type"`                             //笔刷类型
+	Data        string    `json:"data"`                             //笔刷数据
+	X           float32   `json:"x"`                                //数据的左上角x坐标
+	Y           float32   `json:"y"`                                //数据的左上角y坐标
+	Width       float32   `json:"width"`                            //笔刷数据的宽
+	Height      float32   `json:"height"`                           //笔刷数据的高
+	UserId      string    `json:"userId"`                           //用户id
+	BoardId     string    `json:"boardId" gorm:"Index:idx_boardid"` //白板id
+	IsDeleted   bool      `json:"isDeleted" gorm:"default:false"`   //内部判断是否已经删除
+	CreatedTime time.Time `json:"createdTime" gorm:"primaryKey"`
 }
 type ChirographyDao struct {
 }
