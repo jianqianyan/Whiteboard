@@ -7,7 +7,7 @@ export interface DrawInfo {
   y?: number,
   width?: number,
   height?: number,
-  boardId: string,
+  boardId: string | null,
   brushId: string,
   userId: string,
 }
