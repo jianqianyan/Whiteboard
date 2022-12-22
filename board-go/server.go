@@ -1,13 +1,19 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"path"
+	"time"
 
+	jwt "github.com/appleboy/gin-jwt/v2"
+	"github.com/cloudwego/kitex-examples/bizdemo/easy_note/pkg/errno"
 	"github.com/gin-gonic/gin"
+	"github.com/jianqianyan/Whiteboard/board-go/api/handlers"
 	"github.com/jianqianyan/Whiteboard/board-go/controller"
 	"github.com/jianqianyan/Whiteboard/board-go/dao"
+	"github.com/jianqianyan/Whiteboard/board-go/pkg/constants"
 	"github.com/jianqianyan/Whiteboard/board-go/repository"
 )
 
@@ -17,7 +23,6 @@ func main() {
 	Init("root", "Ddnjfdbjasd1*1", "8.130.39.183:3306", "try")
 	//go run ./board-go/server.go
 	r := gin.Default()
-
 	r.POST("/upload", func(c *gin.Context) {
 		// 获取上传文件信息
 		f, err := c.FormFile("filename")
@@ -106,6 +111,71 @@ func main() {
 		<-Once
 		c.JSON(http.StatusOK, gin.H{"message": "成功获取白板Id！ ", "status": 200, "data": boardId})
 	})
+	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
+		Key:        []byte(constants.SecretKey),
+		Timeout:    time.Hour,
+		MaxRefresh: time.Hour,
+		PayloadFunc: func(data interface{}) jwt.MapClaims {
+			if v, ok := data.(*handlers.UserParam); ok {
+				return jwt.MapClaims{
+					constants.IdentityKey: v.Phone,
+				}
+			}
+			return jwt.MapClaims{}
+		},
+		HTTPStatusMessageFunc: func(e error, c *gin.Context) string {
+			switch e.(type) {
+			case errno.ErrNo:
+				return e.(errno.ErrNo).ErrMsg
+			default:
+				return e.Error()
+			}
+		},
+		LoginResponse: func(c *gin.Context, code int, token string, expire time.Time) {
+			c.JSON(http.StatusOK, map[string]interface{}{
+				"status":  200,
+				"message": "Success",
+				"token":   token,
+				"expire":  expire.Format(time.RFC3339),
+			})
+		},
+		Unauthorized: func(c *gin.Context, code int, message string) {
+			c.JSON(code, map[string]interface{}{
+				"status":  errno.AuthorizationFailedErrCode,
+				"message": message,
+			})
+		},
+		Authenticator: func(c *gin.Context) (interface{}, error) {
+			var loginVar handlers.UserParam
+			if err := c.Bind(&loginVar); err != nil {
+				return "", jwt.ErrMissingLoginValues
+			}
+			if len(loginVar.Phone) == 0 || len(loginVar.PassWord) == 0 {
+				return "", jwt.ErrMissingLoginValues
+			}
+			var user = repository.User{
+				Phone:    loginVar.Phone,
+				Password: loginVar.PassWord,
+			}
+			if repository.CheckUser(&user) {
+				return &loginVar, nil
+			}
+			return "", errors.New("帐号或密码错误")
+		},
+		Authorizator: func(data interface{}, c *gin.Context) bool {
+			var user = repository.User{
+				Phone:    data.(*handlers.UserParam).Phone,
+				Password: data.(*handlers.UserParam).PassWord,
+			}
+			return repository.CheckUser(&user)
+		},
+		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
+		TokenHeadName: "Bearer",
+		TimeFunc:      time.Now,
+	})
+	user1 := r.Group("/user")
+	user1.POST("/register", handlers.Register)
+	user1.POST("/login", authMiddleware.LoginHandler)
 	r.Run(":8080")
 }
 
