@@ -3,7 +3,7 @@
         <div class="revoke-box button-style" @click="operationClick('revoke')">
             <svg-icon iconName="icon-chexiao" />
         </div>
-        <div class="user-box button-style">
+        <div class="user-box button-style" @click="operationClick('user')">
             <svg-icon iconName="icon-yonghu"></svg-icon>
         </div>
     </div>

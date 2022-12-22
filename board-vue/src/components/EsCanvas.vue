@@ -13,6 +13,7 @@
   ></configBox>
   <textInput @textEntry="textEntry" v-show="textInputShow.value"></textInput>
   <ImgUp :imgupVisble="imgupVisble" @imgUpload="imgUpload"></ImgUp>
+  <Login :loginVisible="loginVisible" @userChange="userChange"></Login>
 </template>
 
 <script setup lang="ts">
@@ -39,7 +40,7 @@ import { checkClick } from "../tools/checkClick";
 import { brushAdd, brushUpdate } from "./onlineFunctions";
 import { timesTamp } from "../tools/generalTools";
 import API from "../plugin/axios/axiosInstance";
-import { fa } from "element-plus/es/locale";
+import Login from "../components/Login/index.vue";
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -57,6 +58,7 @@ let baseBrushId = "U" + userId + "B" + boardId + "T";
 let imgupVisble = computed(() => {
   return drawMethod.value === 3;
 });
+let loginVisible = ref(false);
 
 // 配置信息
 // 默认笔刷格式
@@ -363,8 +365,16 @@ const operationClick = (val: any) => {
       drawArr(pathArr, ctx, canvas);
       break;
     }
+    case "user": {
+      loginVisible.value = true;
+    }
   }
 };
+
+// 用户信息改变
+const userChange = (val: any) => {
+  loginVisible.value = false;
+}
 
 // 笔刷信息更改
 const brushChange = (val: any) => {

@@ -1,47 +1,107 @@
 <template>
   <div class="login">
     <el-dialog
-      v-model="dialogVisible"
+      v-model="bodyVisible"
       width="250"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
       :show-close="false"
+      :before-close="userChange"
       align-center
     >
       <template #header>
         <div class="login-header">
-          <img :src="logo" alt="">
+          <img :src="logo" alt="" />
         </div>
       </template>
       <div class="login-dialog">
-        <div class="choose-user">
+        <div class="choose-user" v-if="loginStatus === 0">
           <div class="user-login">
-            <button>{{ $t("button.userLogin") }}</button>
+            <button @click="changeToUserLogin()">
+              {{ $t("button.userLogin") }}
+            </button>
           </div>
           <div class="tourist-login">
-            <button>{{ $t("button.touristLogin") }}</button>
+            <button @click="changeToTouristLogin()">
+              {{ $t("button.touristLogin") }}
+            </button>
+          </div>
+          <div class="user-register">
+            <button>
+              {{ $t("button.register") }}
+            </button>
           </div>
         </div>
+        <div class="user-login" v-if="loginStatus === 1">
+          <div class="phone-box">
+            <input
+              type="text"
+              class="phone-input"
+              :placeholder="$t('button.phone')"
+            />
+          </div>
+          <div class="password-box">
+            <input
+              type="password"
+              class="password-input"
+              :placeholder="$t('button.password')"
+            />
+          </div>
+          <div class="login-button">
+            <button>{{ $t("button.login") }}</button>
+          </div>
+        </div>
+        <div class="tourist-login" v-if="loginStatus === 2"></div>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import logo from '../../assets/png/logo.jpg'
+import { ref, toRef, watch } from "vue";
+import logo from "../../assets/png/logo.jpg";
+const props = defineProps(["loginVisible"]);
 
-const dialogVisible = ref(false);
+const dialogVisible = toRef(props, "loginVisible");
+let bodyVisible = ref(false);
+let loginStatus = ref(0);
+
+const emits = defineEmits(["userChange"]);
+watch(dialogVisible, (value) => {
+  bodyVisible.value = value;
+});
+
+function userChange(val: any) {
+  emits("userChange", val);
+  bodyVisible.value = false;
+}
+function changeToUserLogin() {
+  loginStatus.value = 1;
+}
+function changeToTouristLogin() {
+  loginStatus.value = 2;
+}
 </script>
 
 <style scoped lang="less">
-.login-header{
+.login-header {
   text-align: center;
   margin-left: 16px;
 }
 .choose-user {
   width: 100%;
   .tourist-login {
+    margin-top: 10px;
+  }
+  .user-register {
+    margin-top: 10px;
+  }
+}
+.user-login {
+  .password-box {
+    margin-top: 10px;
+  }
+  .login-button {
     margin-top: 10px;
   }
 }
