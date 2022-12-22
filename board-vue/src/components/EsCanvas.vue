@@ -36,9 +36,10 @@ import {
   drawPainting,
 } from "./ExCanvas/Brush";
 import { checkClick } from "../tools/checkClick";
-import { brushAdd } from "./onlineFunctions";
+import { brushAdd, brushUpdate } from "./onlineFunctions";
 import { timesTamp } from "../tools/generalTools";
 import API from "../plugin/axios/axiosInstance";
+import { fa } from "element-plus/es/locale";
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -49,6 +50,7 @@ let textInputShow = reactive({ value: false });
 let drawMethod = reactive({ value: 0 });
 let beclicked = -1;
 let userId = "1";
+let bemoved: boolean = false;
 let boardId: string | null = "1";
 let isPainting = ref(false);
 let baseBrushId = "U" + userId + "B" + boardId + "T";
@@ -289,6 +291,7 @@ function handleMouseMove(event: any) {
         if (pathArr[i].checked) {
           pathArr[i] = moveDraw(moveX, moveY, pathArr[i]);
           drawBeClick(pathArr[i], paintingCtx, paintingCanvas);
+          bemoved = true;
           break;
         }
       }
@@ -339,6 +342,13 @@ function handleMouseUp() {
       }
       brushAdd(pathArr[pathArr.length - 1]);
       drawArr(pathArr, ctx, canvas);
+    }
+    case 0: {
+      if (!bemoved) return;
+      bemoved = false;
+      if (beclicked !== -1) {
+        brushUpdate(pathArr[beclicked]);
+      }
     }
   }
 }

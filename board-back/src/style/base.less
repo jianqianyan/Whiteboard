@@ -1,3 +1,39 @@
 :root {
   --font-color: #222b45;
+  --background-color: rgb(133, 133, 133);
+  font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, Helvetica,
+    Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif;
+}
+input {
+  border: none;
+  outline: none;
+  margin: 6px 0;
+}
+.base-input {
+  height: 35px;
+  padding: 0 14px;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--background-color);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.base-input :placeholder {
+  color: var(--font-color);
+}
+.base-button {
+  height: 35px;
+  padding: 0 14px;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+  color: rgba(255, 255, 255, 0.8);
+  border-color: var(--background-color);
+  background-color: var(--background-color);
+}
+.base-button:hover {
+  background-color: rgb(78, 77, 77);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s linear;
 }
