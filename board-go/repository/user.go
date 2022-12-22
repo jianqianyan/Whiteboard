@@ -20,7 +20,7 @@ func CreateUser(f *User) errno.ErrNo {
 	return errno.Success
 }
 func CheckUser(f *User) bool {
-	result := db.Take(f)
+	result := db.Where("phone=? and password=?", f.Phone, f.Password).Find(&User{})
 	if result.RowsAffected == 0 {
 		return false
 	}

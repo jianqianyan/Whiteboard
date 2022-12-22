@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -10,13 +8,7 @@ import (
 
 var db *gorm.DB
 
-func Init(userName string, userPwd string, dbAddr string, dbName string) error {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True",
-		userName,
-		userPwd,
-		dbAddr,
-		dbName)
-	println(dsn)
+func Init(dsn string) error {
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

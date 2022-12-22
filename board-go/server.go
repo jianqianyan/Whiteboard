@@ -20,7 +20,7 @@ import (
 var Once = make(chan int, 1)
 
 func main() {
-	Init("root", "Ddnjfdbjasd1*1", "8.130.39.183:3306", "try")
+	Init(constants.MySQLDefaultDSN)
 	//go run ./board-go/server.go
 	r := gin.Default()
 	r.POST("/upload", func(c *gin.Context) {
@@ -179,8 +179,8 @@ func main() {
 	r.Run(":8080")
 }
 
-func Init(userName string, userPwd string, dbAddr string, dbName string) error {
-	if err := repository.Init(userName, userPwd, dbAddr, dbName); err != nil {
+func Init(dsn string) error {
+	if err := repository.Init(dsn); err != nil {
 		return err
 	}
 	return nil

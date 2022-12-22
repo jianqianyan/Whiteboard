@@ -11,8 +11,8 @@ const (
 	ApiServiceName          = "demoapi"
 	NoteServiceName         = "demonote"
 	UserServiceName         = "demouser"
-	MySQLDefaultDSN         = "gorm:gorm@tcp(localhost:9910)/gorm?charset=utf8&parseTime=True&loc=Local"
-	EtcdAddress             = "127.0.0.1:2379"
+	MySQLDefaultDSN         = "root:Ddnjfdbjasd1*1@tcp(8.130.39.183:3306)/try?charset=utf8&parseTime=True&loc=Local"
+	EtcdAddress             = "127.0.0.1:3306"
 	CPURateLimit    float64 = 80.0
 	DefaultLimit            = 10
 )
