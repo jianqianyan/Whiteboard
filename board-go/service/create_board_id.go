@@ -2,12 +2,14 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
-	"strconv"
-	"time"
 
 	"github.com/jianqianyan/Whiteboard/board-go/repository"
 )
+
+var OnceBoardId = make(chan int, 1)
+var id int64 = 0
 
 const letterBytes = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -18,21 +20,43 @@ func RandStringBytes(n int) string {
 	}
 	return string(b)
 }
-
-func ReleaseCreateBoardId(userId string) (error, repository.Status, string) {
-	return NewCreateBoardIdFlow(userId).Do()
+func GetId() string {
+	OnceBoardId <- 1
+	id += 1
+	Id := fmt.Sprintf("%08d", id)
+	<-OnceBoardId
+	return Id
 }
-func NewCreateBoardIdFlow(user_id string) *CreateBoardIdFlow {
-	board_id := RandStringBytes(2) + strconv.FormatInt(time.Now().Unix(), 10) + RandStringBytes(2)
+func ReleaseCreateIdByUserId(userId string) (error, repository.Status, string) {
+	return NewCreateIdFlowByUserId(userId).Do()
+}
+func NewCreateIdFlowByUserId(user_id string) *CreateBoardIdFlow {
+	board_id := RandStringBytes(4) + GetId() + RandStringBytes(4)
 	return &CreateBoardIdFlow{
 		userId:  user_id,
 		boardId: board_id,
+		Param:   "userId",
+		ParamId: user_id,
+	}
+}
+func ReleaseCreateIdByBoardId(userId string) (error, repository.Status, string) {
+	return NewCreateIdFlowByBoardId(userId).Do()
+}
+func NewCreateIdFlowByBoardId(board_id string) *CreateBoardIdFlow {
+	user_id := RandStringBytes(4) + GetId() + RandStringBytes(4)
+	return &CreateBoardIdFlow{
+		userId:  user_id,
+		boardId: board_id,
+		Param:   "boardId",
+		ParamId: board_id,
 	}
 }
 
 type CreateBoardIdFlow struct {
 	userId  string
 	boardId string
+	Param   string
+	ParamId string
 	board   *repository.Board
 }
 
@@ -53,8 +77,8 @@ func (f *CreateBoardIdFlow) packBoardInfo() {
 	}
 }
 func (f *CreateBoardIdFlow) checkParm() (error, repository.Status) {
-	if f.userId == "" {
-		return errors.New("userId不能为空"), 406
+	if f.ParamId == "" {
+		return errors.New(fmt.Sprintf("%s不能为空", f.Param)), 406
 	}
 	return nil, 200
 }

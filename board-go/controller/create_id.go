@@ -6,5 +6,8 @@ import (
 )
 
 func ReleaseCreateBoardId(userId string) (error, repository.Status, string) {
-	return service.ReleaseCreateBoardId(userId)
+	return service.ReleaseCreateIdByUserId(userId)
+}
+func ReleaseCreateUserId(boardId string) (error, repository.Status, string) {
+	return service.ReleaseCreateIdByBoardId(boardId)
 }

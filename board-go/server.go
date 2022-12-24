@@ -17,8 +17,6 @@ import (
 	"github.com/jianqianyan/Whiteboard/board-go/repository"
 )
 
-var Once = make(chan int, 1)
-
 func main() {
 	Init(constants.MySQLDefaultDSN)
 	//go run ./board-go/server.go
@@ -102,14 +100,22 @@ func main() {
 	//获取白板id
 	r.GET("/boardIdGet", func(c *gin.Context) {
 		userId := c.Query("userId")
-		Once <- 1
 		err, status, boardId := controller.ReleaseCreateBoardId(userId)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "boardId": boardId})
 			return
 		}
-		<-Once
 		c.JSON(http.StatusOK, gin.H{"message": "成功获取白板Id！ ", "status": 200, "data": boardId})
+	})
+	//获取用户Id
+	r.GET("/user/touristId", func(c *gin.Context) {
+		boardId := c.Query("boardId")
+		err, status, userId := controller.ReleaseCreateBoardId(boardId)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "userId": userId})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "成功获取userId！ ", "status": 200, "data": userId})
 	})
 	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
 		Key:        []byte(constants.SecretKey),
