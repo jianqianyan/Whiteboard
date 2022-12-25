@@ -1,9 +1,10 @@
 package service
 
 import (
+	"crypto/rand"
 	"errors"
 	"fmt"
-	"math/rand"
+	"math/big"
 
 	"github.com/jianqianyan/Whiteboard/board-go/repository"
 )
@@ -16,7 +17,9 @@ const letterBytes = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 func RandStringBytes(n int) string {
 	b := make([]byte, n)
 	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+		x := new(big.Int).SetInt64(int64(62))
+		n, _ := rand.Int(rand.Reader, x)
+		b[i] = letterBytes[n.Int64()]
 	}
 	return string(b)
 }

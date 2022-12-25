@@ -105,17 +105,23 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "boardId": boardId})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "成功获取白板Id！ ", "status": 200, "data": boardId})
+		type Data struct {
+			BoardId string `json:"boardId"`
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "成功获取白板Id！ ", "status": 200, "data": &Data{BoardId: boardId}})
 	})
 	//获取用户Id
 	r.GET("/user/touristId", func(c *gin.Context) {
 		boardId := c.Query("boardId")
 		err, status, userId := controller.ReleaseCreateBoardId(boardId)
+		type Data struct {
+			UserId string `json:"userId"`
+		}
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "userId": userId})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "成功获取userId！ ", "status": 200, "data": userId})
+		c.JSON(http.StatusOK, gin.H{"message": "成功获取userId！ ", "status": 200, "data": &Data{UserId: userId}})
 	})
 	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
 		Key:        []byte(constants.SecretKey),
