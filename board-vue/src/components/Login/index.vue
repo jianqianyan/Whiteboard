@@ -41,14 +41,20 @@
             />
           </div>
           <div class="password-box">
-            <input
-              type="password"
-              class="password-input"
-              :placeholder="$t('button.password')"
-            />
+            <form>
+              <input
+                type="password"
+                class="password-input"
+                :placeholder="$t('button.password')"
+                autocomplete="off"
+              />
+            </form>
           </div>
           <div class="login-button">
             <button>{{ $t("button.login") }}</button>
+          </div>
+          <div class="return-button">
+            <p @click="returnChoose()">返回</p>
           </div>
         </div>
         <div class="tourist-login" v-if="loginStatus === 2"></div>
@@ -81,6 +87,9 @@ function changeToUserLogin() {
 function changeToTouristLogin() {
   loginStatus.value = 2;
 }
+function returnChoose() {
+  loginStatus.value = 0;
+}
 </script>
 
 <style scoped lang="less">
@@ -103,6 +112,14 @@ function changeToTouristLogin() {
   }
   .login-button {
     margin-top: 10px;
+  }
+  .return-button {
+    display: flex;
+    max-height: 30px;
+    justify-content: end;
+    p {
+      cursor: pointer;
+    }
   }
 }
 </style>
