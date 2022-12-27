@@ -8,6 +8,6 @@ import (
 func ReleaseCreateBoardId(userId string) (error, repository.Status, string) {
 	return service.ReleaseCreateIdByUserId(userId)
 }
-func ReleaseCreateUserId(boardId string) (error, repository.Status, string) {
-	return service.ReleaseCreateIdByBoardId(boardId)
+func ReleaseCreateUserId() (error, repository.Status, string) {
+	return service.ReleaseCreateUserId()
 }

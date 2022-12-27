@@ -42,17 +42,9 @@ func NewCreateIdFlowByUserId(user_id string) *CreateBoardIdFlow {
 		ParamId: user_id,
 	}
 }
-func ReleaseCreateIdByBoardId(userId string) (error, repository.Status, string) {
-	return NewCreateIdFlowByBoardId(userId).Do()
-}
-func NewCreateIdFlowByBoardId(board_id string) *CreateBoardIdFlow {
+func ReleaseCreateUserId() (error, repository.Status, string) {
 	user_id := RandStringBytes(4) + GetId() + RandStringBytes(4)
-	return &CreateBoardIdFlow{
-		userId:  user_id,
-		boardId: board_id,
-		Param:   "boardId",
-		ParamId: board_id,
-	}
+	return nil, 200, user_id
 }
 
 type CreateBoardIdFlow struct {

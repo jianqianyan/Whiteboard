@@ -101,24 +101,23 @@ func main() {
 	r.GET("/boardIdGet", func(c *gin.Context) {
 		userId := c.Query("userId")
 		err, status, boardId := controller.ReleaseCreateBoardId(userId)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "boardId": boardId})
-			return
-		}
 		type Data struct {
 			BoardId string `json:"boardId"`
+		}
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "data": &Data{BoardId: boardId}})
+			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "成功获取白板Id！ ", "status": 200, "data": &Data{BoardId: boardId}})
 	})
 	//获取用户Id
 	r.GET("/user/touristId", func(c *gin.Context) {
-		boardId := c.Query("boardId")
-		err, status, userId := controller.ReleaseCreateBoardId(boardId)
+		err, status, userId := controller.ReleaseCreateUserId()
 		type Data struct {
 			UserId string `json:"userId"`
 		}
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "userId": userId})
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "status": status, "data": &Data{UserId: userId}})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "成功获取userId！ ", "status": 200, "data": &Data{UserId: userId}})
