@@ -52,7 +52,7 @@ let drawMethod = reactive({ value: 0 });
 let beclicked = -1;
 let userId = "1";
 let bemoved: boolean = false;
-let boardId: string | null = "1";
+let boardId = "1";
 let isPainting = ref(false);
 let baseBrushId = "U" + userId + "B" + boardId + "T";
 let imgupVisble = computed(() => {
@@ -465,7 +465,7 @@ onMounted(() => {
   let href = window.location.href;
   if (href.indexOf("boardId") !== -1) {
     let url = new URL(href);
-    boardId = url.searchParams.get("boardId");
+    boardId = url.searchParams.get("boardId") as string;
     let apiParams = {
       boardId: boardId,
     };
@@ -492,7 +492,7 @@ onMounted(() => {
       params: apiParams,
     }).then((res) => {
       if (res.data.status === 200) {
-        boardId = res.data.data;
+        boardId = res.data.data.boardId;
       }
     });
   }
