@@ -16,4 +16,5 @@ setupSvgIcon(app)
 app.use(i18n)
 app.use(ElementPlus)
 app.config.globalProperties.$axios = axios;
+app.config.globalProperties.$t = i18n.global.t
 app.mount('#app');

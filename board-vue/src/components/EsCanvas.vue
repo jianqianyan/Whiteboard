@@ -52,7 +52,7 @@ let drawMethod = reactive({ value: 0 });
 let beclicked = -1;
 let userId = "1";
 let bemoved: boolean = false;
-let boardId = ref('1');
+let boardId = "1";
 let isPainting = ref(false);
 let baseBrushId = "U" + userId + "B" + boardId + "T";
 let imgupVisble = computed(() => {
@@ -156,7 +156,7 @@ function handleMouseDown(event: any) {
         data: null,
         brushId: timesTamp(baseBrushId),
         userId: userId,
-        boardId: boardId.value,
+        boardId: boardId,
       };
       pathArr.push(drawInfo);
       isPainting.value = true;
@@ -212,7 +212,7 @@ function handleMouseMove(event: any) {
         data: pathInfo,
         brushId: timesTamp(baseBrushId),
         userId: userId,
-        boardId: boardId.value,
+        boardId: boardId,
       };
       lineMaxX =
         lineMaxX === null
@@ -251,7 +251,7 @@ function handleMouseMove(event: any) {
         height: event.pageY - pointerInfo.y,
         brushId: timesTamp(baseBrushId),
         userId: userId,
-        boardId: boardId.value,
+        boardId: boardId,
       };
       pathArr.pop();
       pathArr.push(drawInfo);
@@ -276,7 +276,7 @@ function handleMouseMove(event: any) {
         width: 2 * RoundInfo.radus,
         brushId: timesTamp(baseBrushId),
         userId: userId,
-        boardId: boardId.value,
+        boardId: boardId,
       };
       pathArr.pop();
       pathArr.push(drawInfo);
@@ -315,7 +315,7 @@ function handleMouseUp() {
         height: lineMaxY - lineMinY,
         brushId: timesTamp(baseBrushId),
         userId: userId,
-        boardId: boardId.value,
+        boardId: boardId,
       };
       pathArr.push(drawInfo);
       brushAdd(drawInfo);
@@ -405,7 +405,7 @@ const textEntry = (val: any) => {
     y: pointerInfo.y + 27,
     brushId: timesTamp(baseBrushId),
     userId: userId,
-    boardId: boardId.value,
+    boardId: boardId,
   };
   ctx.font = TextInfo.fontWidth + " " + TextInfo.fontFamily;
   draw(drawInfo, ctx);
@@ -439,7 +439,7 @@ const imgUpload = (val: any) => {
     height: 100,
     brushId: timesTamp(baseBrushId),
     userId: userId,
-    boardId: boardId.value,
+    boardId: boardId,
   };
   pathArr.push(drawInfo);
   draw(drawInfo, ctx);
@@ -465,7 +465,7 @@ onMounted(() => {
   let href = window.location.href;
   if (href.indexOf("boardId") !== -1) {
     let url = new URL(href);
-    boardId.value = url.searchParams.get("boardId") as string;
+    boardId = url.searchParams.get("boardId") as string;
     let apiParams = {
       boardId: boardId,
     };
