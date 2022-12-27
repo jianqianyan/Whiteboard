@@ -38,6 +38,7 @@
               type="text"
               class="phone-input"
               :placeholder="$t('button.phone')"
+              v-model="phone"
             />
           </div>
           <div class="password-box">
@@ -47,11 +48,12 @@
                 class="password-input"
                 :placeholder="$t('button.password')"
                 autocomplete="off"
+                v-model="password"
               />
             </form>
           </div>
           <div class="login-button">
-            <button>{{ $t("button.login") }}</button>
+            <button @click="login()">{{ $t("button.login") }}</button>
           </div>
           <div class="return-button">
             <p @click="returnChoose()">返回</p>
@@ -66,11 +68,16 @@
 <script setup lang="ts">
 import { ref, toRef, watch } from "vue";
 import logo from "../../assets/png/logo.jpg";
+import i18n from "../../i18n";
+import API from "../../plugin/axios/axiosInstance";
+import { ElMessage } from "element-plus";
 const props = defineProps(["loginVisible"]);
 
 const dialogVisible = toRef(props, "loginVisible");
 let bodyVisible = ref(false);
 let loginStatus = ref(0);
+let phone = ref(null);
+let password = ref(null);
 
 const emits = defineEmits(["userChange"]);
 watch(dialogVisible, (value) => {
@@ -89,6 +96,34 @@ function changeToTouristLogin() {
 }
 function returnChoose() {
   loginStatus.value = 0;
+}
+function login() {
+  if (phone.value === null || password.value === null) {
+    ElMessage({
+      message: i18n.global.t("Tips.PasswrodOrPhoneNotNull"),
+      type: "warning",
+    });
+    return;
+  }
+  let body = {
+    password: password.value,
+    phone: phone.value,
+  };
+  API({
+    method: "post",
+    url: "/user/login",
+    data: body,
+  })
+    .then((res) => {
+      if (res.data.status === 200) {
+        emits("userChange", res.data.data.userId);
+        bodyVisible.value = false;
+      }
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 </script>
 
