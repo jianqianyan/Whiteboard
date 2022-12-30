@@ -21,11 +21,11 @@
               {{ $t("button.userLogin") }}
             </button>
           </div>
-          <div class="tourist-login">
+          <!-- <div class="tourist-login">
             <button @click="changeToTouristLogin()">
               {{ $t("button.touristLogin") }}
             </button>
-          </div>
+          </div> -->
           <div class="user-register">
             <button>
               {{ $t("button.register") }}
@@ -122,7 +122,12 @@ function login() {
       console.log(res);
     })
     .catch((err) => {
-      console.log(err);
+      if (err.response.status === 401) {
+        ElMessage({
+          type: "error",
+          message: err.response.data.message
+        })
+      }
     });
 }
 </script>
