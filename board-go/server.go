@@ -122,17 +122,17 @@ func main() {
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "成功获取userId！ ", "status": 200, "data": &Data{UserId: userId}})
 	})
-	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
+	authMiddleware, _ := handlers.New(&handlers.GinJWTMiddleware{
 		Key:        []byte(constants.SecretKey),
 		Timeout:    time.Hour,
 		MaxRefresh: time.Hour,
-		PayloadFunc: func(data interface{}) jwt.MapClaims {
+		PayloadFunc: func(data interface{}) handlers.MapClaims {
 			if v, ok := data.(*handlers.UserParam); ok {
-				return jwt.MapClaims{
+				return handlers.MapClaims{
 					constants.IdentityKey: v.Phone,
 				}
 			}
-			return jwt.MapClaims{}
+			return handlers.MapClaims{}
 		},
 		HTTPStatusMessageFunc: func(e error, c *gin.Context) string {
 			switch e.(type) {
@@ -142,11 +142,12 @@ func main() {
 				return e.Error()
 			}
 		},
-		LoginResponse: func(c *gin.Context, code int, token string, expire time.Time) {
+		LoginResponse: func(c *gin.Context, code int, token string, expire time.Time, userId string) {
 			c.JSON(http.StatusOK, map[string]interface{}{
 				"status":  200,
 				"message": "Success",
 				"token":   token,
+				"userId":  userId,
 				"expire":  expire.Format(time.RFC3339),
 			})
 		},
