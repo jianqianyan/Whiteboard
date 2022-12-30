@@ -374,7 +374,10 @@ const operationClick = (val: any) => {
 // 用户信息改变
 const userChange = (val: any) => {
   loginVisible.value = false;
-}
+  if (val) {
+    userId = val;
+  }
+};
 
 // 笔刷信息更改
 const brushChange = (val: any) => {
@@ -446,7 +449,7 @@ const imgUpload = (val: any) => {
   brushAdd(drawInfo);
 };
 
-onMounted(() => {
+onMounted(async () => {
   let newCanvas: any = canvasInit("#drawCanvas");
   let body: any = document.querySelector("body");
   canvas = newCanvas.canvas;
@@ -463,6 +466,18 @@ onMounted(() => {
     body.addEventListener("mouseup", handleMouseUp, false);
   }
   let href = window.location.href;
+  await API({
+    method: "get",
+    url: "/user/touristId",
+  })
+    .then((res) => {
+      if (res.data.status === 200) {
+        userId = res.data.data.userId;
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   if (href.indexOf("boardId") !== -1) {
     let url = new URL(href);
     boardId = url.searchParams.get("boardId") as string;
