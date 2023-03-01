@@ -9,6 +9,7 @@ import (
 type User struct {
 	Phone     string `gorm:"primaryKey"`
 	Password  string
+	UserId    string
 	CreatedAt time.Time
 }
 
@@ -25,4 +26,12 @@ func CheckUser(f *User) bool {
 		return false
 	}
 	return true
+}
+func FindUserId(phone string) string {
+	var eg User
+	result := db.Where("phone=? and password=?", phone, "admin").Find(&eg)
+	if result.RowsAffected == 0 {
+		return ""
+	}
+	return eg.UserId
 }

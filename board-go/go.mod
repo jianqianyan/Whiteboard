@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 )
 
-require github.com/golang-jwt/jwt/v4 v4.4.3 // indirect
+require github.com/golang-jwt/jwt/v4 v4.4.3
 
 require (
 	github.com/appleboy/gin-jwt/v2 v2.9.1
