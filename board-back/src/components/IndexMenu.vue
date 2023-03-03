@@ -36,6 +36,10 @@ const menuList = [
     name: "白板",
     link: "/index/boardPage",
   },
+  {
+    name: "报错",
+    link: "/index/errorPage",
+  },
 ];
 let menu = reactive<routerClass[]>([]);
 let activeItem = ref<routerClass>();

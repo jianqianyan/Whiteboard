@@ -30,7 +30,8 @@ import IndexNav from "@/components/IndexNav.vue";
     display: flex;
   }
   .router-box {
-    flex: 1;
+    margin: 15px;
+    width: calc(100% - 250px);
   }
 }
 </style>
