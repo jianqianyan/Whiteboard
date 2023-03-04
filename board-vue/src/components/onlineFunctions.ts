@@ -7,10 +7,10 @@ export function brushAdd(drawInfo: DrawInfo) {
   info.data = JSON.stringify(info.data);
   let body = {
     data: info,
-    Time: sqlTime(),
+    createTime: sqlTime(),
   };
   API({
-    url: "/brushAdd",
+    url: "/board/brushAdd",
     method: "post",
     data: body,
   })
@@ -25,10 +25,10 @@ export function brushUpdate(drawInfo: DrawInfo) {
   info.data = JSON.stringify(info.data);
   let body = {
     data: info,
-    Time: sqlTime(),
+    createTime: sqlTime(),
   };
   API({
-    url: "/brushUpdate",
+    url: "/board/brushUpdate",
     method: "post",
     data: body,
   })
