@@ -20,12 +20,13 @@ export function brushAdd(drawInfo: DrawInfo) {
     });
 }
 
-export function brushUpdate(drawInfo: DrawInfo) {
+export function brushUpdate(drawInfo: DrawInfo, newBrushId: string) {
   let info: DrawInfo = _.cloneDeep(drawInfo);
   info.data = JSON.stringify(info.data);
   let body = {
     data: info,
     createTime: sqlTime(),
+    newBrushId: newBrushId,
   };
   API({
     url: "/board/brushUpdate",
@@ -36,4 +37,5 @@ export function brushUpdate(drawInfo: DrawInfo) {
     .catch((err) => {
       console.log(err);
     });
+  drawInfo.brushId = newBrushId;
 }

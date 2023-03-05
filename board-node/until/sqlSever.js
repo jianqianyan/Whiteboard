@@ -26,6 +26,7 @@ async function find(table, message, begin = 0, pageSize = 10) {
     data = await db(sqlstr);
   } catch (err) {
     save(err.message, "db");
+    data = -1;
   }
   return data;
 }
@@ -51,7 +52,7 @@ async function findNumber(table, message, begin = 0, pageSize = 10) {
   if (data.length > 0) {
     data = Object.values(data[0])[0];
   } else {
-    data = 0;
+    data = -1;
   }
   return data;
 }
@@ -79,6 +80,7 @@ async function fuzzyfind(table, message, begin = 0, pageSize = 10) {
     data = await db(sqlstr);
   } catch (err) {
     save(err.message, "db");
+    data = -1;
   }
   return data;
 }
@@ -104,7 +106,7 @@ async function fuzzyfindNumber(table, message, begin = 0, pageSize = 10) {
   if (data.length > 0) {
     data = Object.values(data[0])[0];
   } else {
-    data = 0;
+    data = -1;
   }
   return data;
 }
@@ -127,19 +129,20 @@ async function add(table, message) {
     data = await db(sqlstr);
   } catch (err) {
     save(err.message, "db");
+    data = -1;
   }
 
   return data;
 }
 
 // 更改数据 更改表table中条件满足target的message数据
-async function update(table, target, message, flag = 0) {
+async function update(table, target, message, flag1 = 0, flag2 = 0) {
   let sqlstr = `update ` + table + ` set `;
   let sql1 = ``,
     sql2 = ``;
   Object.keys(message).forEach((key) => {
     if (sql1 != ``) sql1 += `,`;
-    if (flag == 1) {
+    if (flag1 == 1) {
       sql1 = sql1 + key + `=` + message[key];
     } else {
       sql1 = sql1 + key + `='` + message[key] + `'`;
@@ -147,7 +150,11 @@ async function update(table, target, message, flag = 0) {
   });
   Object.keys(target).forEach((key) => {
     if (sql2 != ``) sql2 += ` AND `;
-    sql2 = sql2 + key + `=` + target[key];
+    if (flag2 == 1) {
+      sql2 = sql2 + key + `=` + target[key];
+    } else {
+      sql2 = sql2 + key + `='` + target[key] + `'`;
+    }
   });
   sql2 = ` where ` + sql2;
   sqlstr = sqlstr + sql1 + sql2;
@@ -155,6 +162,7 @@ async function update(table, target, message, flag = 0) {
     await db(sqlstr);
   } catch (err) {
     save(err.message, "db");
+    data = -1;
   }
 }
 
@@ -175,6 +183,7 @@ async function emoDelete(table, message) {
     await db(sqlstr);
   } catch (err) {
     save(err.message, "db");
+    data = -1;
   }
 }
 
@@ -196,6 +205,7 @@ async function count(table, condition) {
     data = await db(sqlstr);
   } catch (err) {
     save(err.message, "db");
+    data = -1;
   }
   return data;
 }
@@ -207,6 +217,7 @@ async function linkQuery(sqlstr) {
     data = await db(sqlstr);
   } catch (err) {
     save(err.message, "db");
+    data = -1;
   }
   return data;
 }

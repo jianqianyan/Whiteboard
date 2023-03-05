@@ -54,7 +54,9 @@ let userId = "1";
 let bemoved: boolean = false;
 let boardId = "1";
 let isPainting = ref(false);
-let baseBrushId = "U" + userId + "B" + boardId + "T";
+const baseBrushId = () => {
+  return "U" + userId + "B" + boardId + "T";
+}
 let imgupVisble = computed(() => {
   return drawMethod.value === 3;
 });
@@ -154,7 +156,7 @@ function handleMouseDown(event: any) {
       let drawInfo: DrawInfo = {
         type: "null",
         data: null,
-        brushId: timesTamp(baseBrushId),
+        brushId: timesTamp(baseBrushId()),
         userId: userId,
         boardId: boardId,
       };
@@ -210,7 +212,7 @@ function handleMouseMove(event: any) {
       let drawInfo: DrawInfo = {
         type: "brush",
         data: pathInfo,
-        brushId: timesTamp(baseBrushId),
+        brushId: timesTamp(baseBrushId()),
         userId: userId,
         boardId: boardId,
       };
@@ -249,7 +251,7 @@ function handleMouseMove(event: any) {
         y: pointerInfo.y,
         width: event.pageX - pointerInfo.x,
         height: event.pageY - pointerInfo.y,
-        brushId: timesTamp(baseBrushId),
+        brushId: timesTamp(baseBrushId()),
         userId: userId,
         boardId: boardId,
       };
@@ -274,7 +276,7 @@ function handleMouseMove(event: any) {
         y: RoundInfo.y - RoundInfo.radus,
         height: 2 * RoundInfo.radus,
         width: 2 * RoundInfo.radus,
-        brushId: timesTamp(baseBrushId),
+        brushId: timesTamp(baseBrushId()),
         userId: userId,
         boardId: boardId,
       };
@@ -313,7 +315,7 @@ function handleMouseUp() {
         y: lineMinY,
         width: lineMaxX - lineMinX,
         height: lineMaxY - lineMinY,
-        brushId: timesTamp(baseBrushId),
+        brushId: timesTamp(baseBrushId()),
         userId: userId,
         boardId: boardId,
       };
@@ -349,7 +351,8 @@ function handleMouseUp() {
       if (!bemoved) return;
       bemoved = false;
       if (beclicked !== -1) {
-        brushUpdate(pathArr[beclicked]);
+        let newBrushId = timesTamp(baseBrushId());
+        brushUpdate(pathArr[beclicked], newBrushId);
       }
     }
   }
@@ -406,7 +409,7 @@ const textEntry = (val: any) => {
     data: TextInfo,
     x: pointerInfo.x,
     y: pointerInfo.y + 27,
-    brushId: timesTamp(baseBrushId),
+    brushId: timesTamp(baseBrushId()),
     userId: userId,
     boardId: boardId,
   };
@@ -440,7 +443,7 @@ const imgUpload = (val: any) => {
     y: 200,
     width: 100,
     height: 100,
-    brushId: timesTamp(baseBrushId),
+    brushId: timesTamp(baseBrushId()),
     userId: userId,
     boardId: boardId,
   };
@@ -502,7 +505,7 @@ onMounted(async () => {
       userId: userId,
     };
     API({
-      url: "/boardIdGet",
+      url: "/board/boardIdGet",
       method: "get",
       params: apiParams,
     }).then((res) => {
