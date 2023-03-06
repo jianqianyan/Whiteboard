@@ -21,13 +21,8 @@
               {{ $t("button.userLogin") }}
             </button>
           </div>
-          <!-- <div class="tourist-login">
-            <button @click="changeToTouristLogin()">
-              {{ $t("button.touristLogin") }}
-            </button>
-          </div> -->
           <div class="user-register">
-            <button>
+            <button @click="changeToTouristLogin()">
               {{ $t("button.register") }}
             </button>
           </div>
@@ -59,14 +54,51 @@
             <p @click="returnChoose()">返回</p>
           </div>
         </div>
-        <div class="tourist-login" v-if="loginStatus === 2"></div>
+        <div class="user-register" v-if="loginStatus === 2">
+          <div class="phone-box">
+            <input
+              type="text"
+              class="phone-input"
+              :placeholder="$t('button.phone')"
+              v-model="registerData.phone"
+            />
+          </div>
+          <div class="password-box">
+            <form>
+              <input
+                type="password"
+                class="password-input"
+                :placeholder="$t('button.password')"
+                autocomplete="off"
+                v-model="registerData.password"
+              />
+            </form>
+          </div>
+          <div class="password-box">
+            <form>
+              <input
+                type="password"
+                class="password-input"
+                :placeholder="$t('button.confirmPassword')"
+                autocomplete="off"
+                v-model="registerData.confirmPassword"
+              />
+            </form>
+          </div>
+          <div class="login-button">
+            <button @click="register()">{{ $t("button.register") }}</button>
+          </div>
+          <div class="return-button">
+            <p @click="returnChoose()">返回</p>
+          </div>
+        </div>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, toRef, watch } from "vue";
+import { ref, toRef, watch, reactive } from "vue";
 import logo from "../../assets/png/logo.jpg";
 import i18n from "../../i18n";
 import API from "../../plugin/axios/axiosInstance";
@@ -78,6 +110,7 @@ let bodyVisible = ref(false);
 let loginStatus = ref(0);
 let phone = ref(null);
 let password = ref(null);
+let registerData = ref({ phone: null, password: null, confirmPassword: null });
 
 const emits = defineEmits(["userChange"]);
 watch(dialogVisible, (value) => {
@@ -117,19 +150,76 @@ function login() {
     .then((res) => {
       if (res.data.status === 200) {
         emits("userChange", res.data.data.userId);
+        localStorage.setItem("userId", res.data.data.userId);
+        localStorage.setItem("token", res.data.data.token);
         bodyVisible.value = false;
+        ElMessage({
+          message: i18n.global.t("Tips.LoginSucess"),
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          type: "error",
+          message: res.data.message,
+        });
       }
-      console.log(res);
     })
     .catch((err) => {
       if (err.response.status === 401) {
         ElMessage({
           type: "error",
-          message: err.response.data.message
-        })
+          message: err.response.data.message,
+        });
       }
     });
 }
+const register = () => {
+  if (
+    !registerData.value.phone ||
+    !registerData.value.password ||
+    !registerData.value.confirmPassword
+  ) {
+    ElMessage({
+      message: i18n.global.t("Tips.PasswrodOrPhoneNotNull"),
+      type: "warning",
+    });
+    return;
+  }
+  // 检验两次密码是否相同
+  if (registerData.value.password != registerData.value.confirmPassword) {
+    ElMessage({
+      message: i18n.global.t("Tips.confirmNOTLike"),
+      type: "warning",
+    });
+    return;
+  }
+  let body = {
+    password: registerData.value.password,
+    phone: registerData.value.phone,
+  };
+  API({
+    method: "post",
+    url: "/user/register",
+    data: body,
+  })
+    .then((res) => {
+      ElMessage({
+        type: res.data.status === 200 ? "success" : "error",
+        message: res.data.message,
+      });
+      if (res.data.status === 200) {
+        loginStatus.value = 1;
+      }
+    })
+    .catch((err) => {
+      if (err.response.status === 401) {
+        ElMessage({
+          type: "error",
+          message: err.response.data.message,
+        });
+      }
+    });
+};
 </script>
 
 <style scoped lang="less">
@@ -139,14 +229,27 @@ function login() {
 }
 .choose-user {
   width: 100%;
-  .tourist-login {
-    margin-top: 10px;
-  }
   .user-register {
     margin-top: 10px;
   }
 }
 .user-login {
+  .password-box {
+    margin-top: 10px;
+  }
+  .login-button {
+    margin-top: 10px;
+  }
+  .return-button {
+    display: flex;
+    max-height: 30px;
+    justify-content: end;
+    p {
+      cursor: pointer;
+    }
+  }
+}
+.user-register {
   .password-box {
     margin-top: 10px;
   }

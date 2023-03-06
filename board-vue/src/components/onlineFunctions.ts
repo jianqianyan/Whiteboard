@@ -4,6 +4,7 @@ import { sqlTime } from "../tools/sqlTime";
 import _ from "lodash";
 export function brushAdd(drawInfo: DrawInfo) {
   let info: DrawInfo = _.cloneDeep(drawInfo);
+  if (info.userId === "-1" || info.boardId === "-1") return;
   info.data = JSON.stringify(info.data);
   let body = {
     data: info,
@@ -22,6 +23,7 @@ export function brushAdd(drawInfo: DrawInfo) {
 
 export function brushUpdate(drawInfo: DrawInfo, newBrushId: string) {
   let info: DrawInfo = _.cloneDeep(drawInfo);
+  if (info.userId === "-1" || info.boardId === "-1") return;
   info.data = JSON.stringify(info.data);
   let body = {
     data: info,

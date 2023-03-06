@@ -1,0 +1,6 @@
+Mon, 06 Mar 2023 14:02:09 GMT
+ER_DATA_TOO_LONG: Data too long for column 'boardId' at row 1
+Mon, 06 Mar 2023 14:22:41 GMT
+ER_DATA_TOO_LONG: Data too long for column 'boardId' at row 1
+Mon, 06 Mar 2023 14:22:42 GMT
+ER_DATA_TOO_LONG: Data too long for column 'boardId' at row 1

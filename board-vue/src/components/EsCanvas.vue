@@ -50,13 +50,14 @@ let paintingCtx: any;
 let textInputShow = reactive({ value: false });
 let drawMethod = reactive({ value: 0 });
 let beclicked = -1;
-let userId = "1";
+let userId = "-1";
 let bemoved: boolean = false;
 let boardId = "1";
 let isPainting = ref(false);
+let onlyWatch: boolean = false;
 const baseBrushId = () => {
   return "U" + userId + "B" + boardId + "T";
-}
+};
 let imgupVisble = computed(() => {
   return drawMethod.value === 3;
 });
@@ -379,6 +380,22 @@ const userChange = (val: any) => {
   loginVisible.value = false;
   if (val) {
     userId = val;
+    let apiParams = {
+      userId: userId,
+    };
+    API({
+      url: "/board/boardIdGet",
+      method: "get",
+      params: apiParams,
+    }).then((res) => {
+      if (res.data.status === 200) {
+        boardId = res.data.data.boardId;
+        pathArr.forEach((item) => {
+          item.boardId = boardId;
+          item.userId = userId;
+        });
+      }
+    });
   }
 };
 
@@ -468,19 +485,8 @@ onMounted(async () => {
     body.addEventListener("mousemove", handleMouseMove, false);
     body.addEventListener("mouseup", handleMouseUp, false);
   }
+  let LocalUserId = localStorage.getItem("userId");
   let href = window.location.href;
-  await API({
-    method: "get",
-    url: "/user/touristId",
-  })
-    .then((res) => {
-      if (res.data.status === 200) {
-        userId = res.data.data.userId;
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
   if (href.indexOf("boardId") !== -1) {
     let url = new URL(href);
     boardId = url.searchParams.get("boardId") as string;
@@ -500,19 +506,23 @@ onMounted(async () => {
         drawArr(pathArr, ctx, canvas);
       }
     });
+    if (!LocalUserId) onlyWatch = true;
   } else {
-    let apiParams = {
-      userId: userId,
-    };
-    API({
-      url: "/board/boardIdGet",
-      method: "get",
-      params: apiParams,
-    }).then((res) => {
-      if (res.data.status === 200) {
-        boardId = res.data.data.boardId;
-      }
-    });
+    if (LocalUserId) {
+      let apiParams = {
+        userId: LocalUserId,
+      };
+      API({
+        url: "/board/boardIdGet",
+        method: "get",
+        params: apiParams,
+      }).then((res) => {
+        if (res.data.status === 200) {
+          userId = LocalUserId as string;
+          boardId = res.data.data.boardId;
+        }
+      });
+    }
   }
 });
 </script>
