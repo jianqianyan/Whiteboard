@@ -4,6 +4,7 @@ function tokenhandler(req, res, next) {
     next();
     return;
   }
+  // 对ip进行校验 
   let ip = req.ip || req.connection.remoteAddress;
   let token = req.user;
   if (token.ip !== ip) {

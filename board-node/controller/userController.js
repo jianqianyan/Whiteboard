@@ -1,4 +1,5 @@
-const { linkQuery } = require("../until/sqlSever");
+const { linkQuery, add } = require("../until/sqlSever");
+const { sqlTime } = require("../until/Time");
 const login = async (phone, password) => {
   let user = await linkQuery(`select * from user where phone='` + phone + `'`);
   let userId = -1;
@@ -11,4 +12,18 @@ const login = async (phone, password) => {
   return userId;
 };
 
-module.exports = { login };
+const register = async (phone, password) => {
+  let user = await linkQuery(`select * from user where phone='` + phone + `'`);
+  if (user.length !== 0) return { status: -1, message: "手机号已被注册" };
+  let userData = {
+    userName: phone,
+    phone: phone,
+    password: password,
+    createTime: sqlTime(),
+  };
+  user = await add("user", userData);
+  if (user === -1) return { status: -1, message: "注册失败" };
+  return { status: 200, message: "注册成功" };
+};
+
+module.exports = { login, register };

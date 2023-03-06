@@ -31,7 +31,7 @@ app.use(
     secret: SECRET_KEY,
     algorithms: ["HS256"], // 使用何种加密算法解析
   }).unless({
-    path: ["/public", "/user/login"],
+    path: ["/public", "/user/login", "/user/register"],
   })
 );
 const tokenhandler = require("./middleware/tokenhandler");
