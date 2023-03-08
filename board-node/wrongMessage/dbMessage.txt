@@ -48,3 +48,9 @@ Tue, 07 Mar 2023 15:33:18 GMT
 ER_DUP_ENTRY: Duplicate entry 'U-1Bu1t87T5EY2313T16782025264838198' for key 'brush.PRIMARY'
 Tue, 07 Mar 2023 15:42:28 GMT
 ER_DATA_TOO_LONG: Data too long for column 'data' at row 1
+Wed, 08 Mar 2023 14:45:58 GMT
+ER_BAD_FIELD_ERROR: Unknown column 'u1tATMLSZ3025' in 'where clause'
+Wed, 08 Mar 2023 14:45:58 GMT
+ER_BAD_FIELD_ERROR: Unknown column 'undefined' in 'field list'
+Wed, 08 Mar 2023 14:48:16 GMT
+ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '22:48:16 where brushId='u1tATMLSZ3025'' at line 1

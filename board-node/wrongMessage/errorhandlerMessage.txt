@@ -124,3 +124,7 @@ Tue, 07 Mar 2023 15:37:09 GMT
 PayloadTooLargeError: request entity too largePayloadTooLargeError
 Tue, 07 Mar 2023 16:00:34 GMT
 UnauthorizedError: No authorization token was foundUnauthorizedError
+Wed, 08 Mar 2023 14:19:54 GMT
+UnauthorizedError: jwt expiredUnauthorizedError
+Wed, 08 Mar 2023 14:19:55 GMT
+UnauthorizedError: jwt expiredUnauthorizedError

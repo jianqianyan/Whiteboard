@@ -1,6 +1,6 @@
 <template>
     <div class="operation-box">
-        <div class="revoke-box button-style" @click="operationClick('revoke')">
+        <div class="revoke-box button-style" @click="operationClick('delect')">
             <svg-icon iconName="icon-shanchu" />
         </div>
         <div class="user-box button-style" @click="operationClick('user')">

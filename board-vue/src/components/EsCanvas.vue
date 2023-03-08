@@ -46,6 +46,7 @@ import { brushAdd, brushUpdate } from "./onlineFunctions";
 import { timesTamp } from "../tools/generalTools";
 import API from "../plugin/axios/axiosInstance";
 import Login from "../components/Login/index.vue";
+import { sqlTime } from "../tools/sqlTime";
 
 let mouseButtonDown = false;
 let canvas: any;
@@ -67,6 +68,7 @@ let imgupVisble = computed(() => {
   return drawMethod.value === 3;
 });
 let loginVisible = ref(false);
+let lasetDelect = -1;
 
 // 配置信息
 // 默认笔刷格式
@@ -185,6 +187,7 @@ function handleMouseDown(event: any) {
         pathArr[i].checked = false;
       }
       if (beclicked !== -1) {
+        lasetDelect = beclicked;
         pathArr[beclicked].checked = true;
         paintingPath = pathArr[beclicked];
         isPainting.value = true;
@@ -195,7 +198,10 @@ function handleMouseDown(event: any) {
           drawBeClick(paintingPath, paintingCtx, paintingCanvas);
         });
       } else {
-        if (lastClick === -1) return;
+        if (lastClick === -1) {
+          lasetDelect = lastClick;
+          return;
+        }
       }
       drawArr(pathArr, ctx, canvas);
       break;
@@ -376,6 +382,27 @@ const operationClick = (val: any) => {
     }
     case "user": {
       loginVisible.value = true;
+    }
+    case "delect": {
+      if (lasetDelect !== -1) {
+        let body = {
+          Time: sqlTime(),
+          brushId: pathArr[lasetDelect].brushId,
+        };
+        API({
+          url: "/board/brushDelect",
+          method: "post",
+          data: body,
+        })
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        pathArr.splice(lasetDelect, 1);
+        drawArr(pathArr, ctx, canvas);
+      }
     }
   }
 };

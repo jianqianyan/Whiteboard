@@ -106,12 +106,12 @@ const boardAdd = async (userId) => {
  * @return {message: 返回信息}
  **/
 const brushDelect = async (data) => {
-  let target = { brushId: data.brushId };
+  let target = { brushId: data.brushId,  };
   let message = { delected: 1 };
-  let result = await update("brush", target, message, 1, 1);
+  let result = await update("brush", target, message, 1, 0);
   if (result === -1) return -1;
-  message = { delectTime: data.delectTime };
-  result = await update("brush", target, message, 1, 0);
+  message = { delectTime: data.Time };
+  result = await update("brush", target, message, 0, 0);
   if (result === -1) return -1;
   return "OK";
 };

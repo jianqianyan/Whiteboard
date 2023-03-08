@@ -62,7 +62,7 @@ router.post("/brushDelect", async (req, res) => {
   let result = await brushDelect(data);
   let retMe = new returnMessage();
   if (result !== -1) {
-    retMe.data = result;
+    retMe.data = "OK";
     retMe.status = 200;
   } else {
     retMe.data = "ERROR";
