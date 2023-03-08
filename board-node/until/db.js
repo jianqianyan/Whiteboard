@@ -10,6 +10,7 @@ let db = async (sqlStr) => {
       } else {
         resolve(res);
       }
+      connection.end();
     });
   });
 };

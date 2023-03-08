@@ -4,3 +4,47 @@ Mon, 06 Mar 2023 14:22:41 GMT
 ER_DATA_TOO_LONG: Data too long for column 'boardId' at row 1
 Mon, 06 Mar 2023 14:22:42 GMT
 ER_DATA_TOO_LONG: Data too long for column 'boardId' at row 1
+Tue, 07 Mar 2023 10:36:12 GMT
+ER_DATA_TOO_LONG: Data too long for column 'boardId' at row 1
+Tue, 07 Mar 2023 10:37:02 GMT
+ER_DATA_TOO_LONG: Data too long for column 'boardId' at row 1
+Tue, 07 Mar 2023 13:34:46 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956220681136' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 13:34:46 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956214352853' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 13:34:46 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956225443524' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 13:35:06 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956225443524' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 13:35:06 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956220681136' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 13:35:06 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956214352853' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 13:35:28 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956225443524' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 13:35:28 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956214352853' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 13:35:28 GMT
+ER_DUP_ENTRY: Duplicate entry 'U1Bu1tHX9CAY6531T16781956220681136' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 15:02:25 GMT
+ER_DATA_TOO_LONG: Data too long for column 'x' at row 1
+Tue, 07 Mar 2023 15:02:26 GMT
+ER_DATA_TOO_LONG: Data too long for column 'x' at row 1
+Tue, 07 Mar 2023 15:07:42 GMT
+ER_DATA_TOO_LONG: Data too long for column 'x' at row 1
+Tue, 07 Mar 2023 15:07:49 GMT
+ER_DATA_TOO_LONG: Data too long for column 'x' at row 1
+Tue, 07 Mar 2023 15:08:34 GMT
+ER_DATA_TOO_LONG: Data too long for column 'x' at row 1
+Tue, 07 Mar 2023 15:08:35 GMT
+ER_DATA_TOO_LONG: Data too long for column 'x' at row 1
+Tue, 07 Mar 2023 15:09:32 GMT
+ER_DATA_TOO_LONG: Data too long for column 'x' at row 1
+Tue, 07 Mar 2023 15:33:18 GMT
+ER_DUP_ENTRY: Duplicate entry 'U-1Bu1t87T5EY2313T16782021129075229' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 15:33:18 GMT
+ER_DUP_ENTRY: Duplicate entry 'U-1Bu1t87T5EY2313T16782023995742036' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 15:33:18 GMT
+ER_DUP_ENTRY: Duplicate entry 'U-1Bu1t87T5EY2313T16782025264838198' for key 'brush.PRIMARY'
+Tue, 07 Mar 2023 15:42:28 GMT
+ER_DATA_TOO_LONG: Data too long for column 'data' at row 1

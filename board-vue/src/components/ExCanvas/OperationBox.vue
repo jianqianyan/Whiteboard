@@ -1,7 +1,7 @@
 <template>
     <div class="operation-box">
         <div class="revoke-box button-style" @click="operationClick('revoke')">
-            <svg-icon iconName="icon-chexiao" />
+            <svg-icon iconName="icon-shanchu" />
         </div>
         <div class="user-box button-style" @click="operationClick('user')">
             <svg-icon iconName="icon-yonghu"></svg-icon>

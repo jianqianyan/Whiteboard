@@ -14,7 +14,7 @@
           <img :src="logo" alt="" />
         </div>
       </template>
-      <div class="login-dialog">
+      <div class="login-dialog" v-if="userId === '-1'">
         <div class="choose-user" v-if="loginStatus === 0">
           <div class="user-login">
             <button @click="changeToUserLogin()">
@@ -93,6 +93,16 @@
           </div>
         </div>
       </div>
+      <div class="user-dialog" v-else>
+        <div class="user-name">{{ userData.userName }}</div>
+        <div class="user-id">UID: {{ userId }}</div>
+        <button @click="">
+          {{ $t("button.shareWhiteboard") }}
+        </button>
+        <button @click="logOut()">
+          {{ $t("button.logOut") }}
+        </button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -103,14 +113,16 @@ import logo from "../../assets/png/logo.jpg";
 import i18n from "../../i18n";
 import API from "../../plugin/axios/axiosInstance";
 import { ElMessage } from "element-plus";
-const props = defineProps(["loginVisible"]);
+const props = defineProps(["loginVisible", "userId"]);
 
 const dialogVisible = toRef(props, "loginVisible");
+const userId = toRef(props, "userId");
 let bodyVisible = ref(false);
 let loginStatus = ref(0);
 let phone = ref(null);
 let password = ref(null);
 let registerData = ref({ phone: null, password: null, confirmPassword: null });
+const userData = reactive({ phone: null, userName: null });
 
 const emits = defineEmits(["userChange"]);
 watch(dialogVisible, (value) => {
@@ -220,6 +232,34 @@ const register = () => {
       }
     });
 };
+const logOut = () => {
+  localStorage.removeItem('userId');
+  localStorage.removeItem('token');
+  document.location.reload();
+};
+watch(userId, (value) => {
+  if (userId.value !== "-1") {
+    API({
+      method: "get",
+      url: "/user/getUser",
+      params: { userId: userId.value },
+    })
+      .then((res) => {
+        if (res.data.status === 200) {
+          userData.phone = res.data.data.phone;
+          userData.userName = res.data.data.userName;
+        } else {
+          ElMessage({
+            type: "warning",
+            message: res.data.message,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+});
 </script>
 
 <style scoped lang="less">
@@ -263,6 +303,21 @@ const register = () => {
     p {
       cursor: pointer;
     }
+  }
+}
+.user-dialog {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  .user-name {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+  .user-id {
+    font-size: 10px;
+  }
+  button {
+    margin-top: 10px;
   }
 }
 </style>

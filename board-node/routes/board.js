@@ -5,6 +5,7 @@ const {
   boardAdd,
   brushUpdate,
   brushDelect,
+  getBoard,
 } = require("../controller/boardController");
 const returnMessage = require("../until/returnMessage");
 
@@ -70,5 +71,14 @@ router.post("/brushDelect", async (req, res) => {
   res.send(retMe);
 });
 
+router.get("/boardInit", async (req, res) => {
+  let data = req.query;
+  let retMs = new returnMessage();
+  let result = await getBoard(data.boardId);
+  retMs.status = result === -1 ? 404 : 200;
+  retMs.message = result === -1 ? "初始化失败" : "初始化成功";
+  retMs.data = result === -1 ? [] : result;
+  res.send(retMs);
+});
 
 module.exports = router;

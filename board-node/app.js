@@ -5,10 +5,11 @@ const { dbInit } = require("./until/db");
 const board = require("./routes/board");
 const user = require("./routes/user");
 var cookieParser = require("cookie-parser");
-app.use(express.json());
+app.use(express.json({ limit: "100mb" }));
 app.use(
   express.urlencoded({
-    extended: false,
+    limit: "100mb",
+    extended: true,
   })
 );
 
@@ -31,7 +32,7 @@ app.use(
     secret: SECRET_KEY,
     algorithms: ["HS256"], // 使用何种加密算法解析
   }).unless({
-    path: ["/public", "/user/login", "/user/register"],
+    path: ["/public", "/user/login", "/user/register", "/board/boardInit"],
   })
 );
 const tokenhandler = require("./middleware/tokenhandler");

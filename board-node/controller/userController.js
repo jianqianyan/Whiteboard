@@ -26,4 +26,14 @@ const register = async (phone, password) => {
   return { status: 200, message: "注册成功" };
 };
 
-module.exports = { login, register };
+const findUser = async (userId) => {
+  let user = await linkQuery(
+    `select * from user where userId='` + userId + `'`
+  );
+  if (user.length == 0) {
+    return -1;
+  }
+  return { userName: user[0].userName, phone: user[0].phone };
+};
+
+module.exports = { login, register, findUser };

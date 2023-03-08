@@ -10,10 +10,15 @@
     @brushChange="brushChange"
     @methodChange="methodChange"
     :config="colorConfig"
+    v-if="!onlyWatch"
   ></configBox>
   <textInput @textEntry="textEntry" v-show="textInputShow.value"></textInput>
   <ImgUp :imgupVisble="imgupVisble" @imgUpload="imgUpload"></ImgUp>
-  <Login :loginVisible="loginVisible" @userChange="userChange"></Login>
+  <Login
+    :loginVisible="loginVisible"
+    @userChange="userChange"
+    :userId="userId"
+  ></Login>
 </template>
 
 <script setup lang="ts">
@@ -50,13 +55,13 @@ let paintingCtx: any;
 let textInputShow = reactive({ value: false });
 let drawMethod = reactive({ value: 0 });
 let beclicked = -1;
-let userId = "-1";
+let userId = ref("-1");
 let bemoved: boolean = false;
 let boardId = "1";
 let isPainting = ref(false);
-let onlyWatch: boolean = false;
+let onlyWatch = ref(false);
 const baseBrushId = () => {
-  return "U" + userId + "B" + boardId + "T";
+  return "U" + userId.value + "B" + boardId + "T";
 };
 let imgupVisble = computed(() => {
   return drawMethod.value === 3;
@@ -158,7 +163,7 @@ function handleMouseDown(event: any) {
         type: "null",
         data: null,
         brushId: timesTamp(baseBrushId()),
-        userId: userId,
+        userId: userId.value,
         boardId: boardId,
       };
       pathArr.push(drawInfo);
@@ -214,7 +219,7 @@ function handleMouseMove(event: any) {
         type: "brush",
         data: pathInfo,
         brushId: timesTamp(baseBrushId()),
-        userId: userId,
+        userId: userId.value,
         boardId: boardId,
       };
       lineMaxX =
@@ -253,7 +258,7 @@ function handleMouseMove(event: any) {
         width: event.pageX - pointerInfo.x,
         height: event.pageY - pointerInfo.y,
         brushId: timesTamp(baseBrushId()),
-        userId: userId,
+        userId: userId.value,
         boardId: boardId,
       };
       pathArr.pop();
@@ -278,7 +283,7 @@ function handleMouseMove(event: any) {
         height: 2 * RoundInfo.radus,
         width: 2 * RoundInfo.radus,
         brushId: timesTamp(baseBrushId()),
-        userId: userId,
+        userId: userId.value,
         boardId: boardId,
       };
       pathArr.pop();
@@ -288,8 +293,8 @@ function handleMouseMove(event: any) {
     }
     case 0: {
       if (beclicked === -1) return;
-      let moveX = event.pageX - pointerInfo.x;
-      let moveY = event.pageY - pointerInfo.y;
+      let moveX = Number(event.pageX) - Number(pointerInfo.x);
+      let moveY = Number(event.pageY) - Number(pointerInfo.y);
       pointerInfo.x = event.pageX;
       pointerInfo.y = event.pageY;
       for (let i = 0; i < pathArr.length; ++i) {
@@ -317,7 +322,7 @@ function handleMouseUp() {
         width: lineMaxX - lineMinX,
         height: lineMaxY - lineMinY,
         brushId: timesTamp(baseBrushId()),
-        userId: userId,
+        userId: userId.value,
         boardId: boardId,
       };
       pathArr.push(drawInfo);
@@ -378,10 +383,10 @@ const operationClick = (val: any) => {
 // 用户信息改变
 const userChange = (val: any) => {
   loginVisible.value = false;
-  if (val) {
-    userId = val;
+  if (typeof val !== "function") {
+    userId.value = val;
     let apiParams = {
-      userId: userId,
+      userId: userId.value,
     };
     API({
       url: "/board/boardIdGet",
@@ -392,8 +397,11 @@ const userChange = (val: any) => {
         boardId = res.data.data.boardId;
         pathArr.forEach((item) => {
           item.boardId = boardId;
-          item.userId = userId;
+          item.userId = userId.value;
+          brushAdd(item);
         });
+        onlyWatch.value = false;
+        drawMethod.value = 0;
       }
     });
   }
@@ -427,7 +435,7 @@ const textEntry = (val: any) => {
     x: pointerInfo.x,
     y: pointerInfo.y + 27,
     brushId: timesTamp(baseBrushId()),
-    userId: userId,
+    userId: userId.value,
     boardId: boardId,
   };
   ctx.font = TextInfo.fontWidth + " " + TextInfo.fontFamily;
@@ -461,7 +469,7 @@ const imgUpload = (val: any) => {
     width: 100,
     height: 100,
     brushId: timesTamp(baseBrushId()),
-    userId: userId,
+    userId: userId.value,
     boardId: boardId,
   };
   pathArr.push(drawInfo);
@@ -487,6 +495,18 @@ onMounted(async () => {
   }
   let LocalUserId = localStorage.getItem("userId");
   let href = window.location.href;
+  // 校验token是否过期
+  if (LocalUserId) {
+    await API({
+      url: "/user/getUser",
+      method: "get",
+      params: { userId: LocalUserId },
+    }).then((res) => {
+      if (res.data.status === 200) {
+        userId.value = LocalUserId as string;
+      }
+    });
+  }
   if (href.indexOf("boardId") !== -1) {
     let url = new URL(href);
     boardId = url.searchParams.get("boardId") as string;
@@ -494,19 +514,22 @@ onMounted(async () => {
       boardId: boardId,
     };
     API({
-      url: "/boardInit",
+      url: "/board/boardInit",
       method: "get",
       params: apiParams,
     }).then((res) => {
       if (res.data.status === 200) {
         res.data.data.map((item: any) => {
           item.data = JSON.parse(item.data);
-          pathArr.push(item);
+          pathArr.push(item as DrawInfo);
         });
         drawArr(pathArr, ctx, canvas);
       }
     });
-    if (!LocalUserId) onlyWatch = true;
+    if (!LocalUserId) {
+      onlyWatch.value = true;
+      drawMethod.value = -1;
+    }
   } else {
     if (LocalUserId) {
       let apiParams = {
@@ -518,7 +541,7 @@ onMounted(async () => {
         params: apiParams,
       }).then((res) => {
         if (res.data.status === 200) {
-          userId = LocalUserId as string;
+          userId.value = LocalUserId as string;
           boardId = res.data.data.boardId;
         }
       });

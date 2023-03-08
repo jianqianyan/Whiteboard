@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const jwt = require("../until/token");
-const { login, register } = require("../controller/userController");
+const { login, register, findUser } = require("../controller/userController");
 const returnMessage = require("../until/returnMessage");
 
 router.post("/login", async (req, res) => {
@@ -43,6 +43,16 @@ router.post("/register", async (req, res) => {
   let regData = await register(data.phone, data.password);
   retMs.status = regData.status === -1 ? 404 : 200;
   retMs.message = regData.message;
+  res.send(retMs);
+});
+
+router.get("/getUser", async (req, res) => {
+  let data = req.query;
+  const retMs = new returnMessage();
+  let userData = await findUser(data.userId);
+  retMs.status = userData === -1 ? 404 : 200;
+  retMs.message = userData === -1 ? "获取用户信息失败" : "获取用户信息成功";
+  retMs.data = userData === -1 ? {} : userData;
   res.send(retMs);
 });
 

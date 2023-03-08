@@ -8,6 +8,8 @@ export default {
     password: "密码",
     register: "注册",
     confirmPassword: "确认密码",
+    logOut: "退出登录",
+    shareWhiteboard: "分享白板",
   },
   Tips: {
     PasswrodOrPhoneNotNull: "手机号或者密码不能为空",

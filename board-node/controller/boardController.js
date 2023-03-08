@@ -1,6 +1,7 @@
-const { add, update } = require(`../until/sqlSever`);
+const { add, update, linkQuery } = require(`../until/sqlSever`);
 const { sqlTime } = require(`../until/Time`);
 const { timesTamp } = require("../until/Time");
+
 const brushAtt = [
   "brushId",
   "boardId",
@@ -21,6 +22,27 @@ class brushData {
   constructor(data) {
     for (let key in data) {
       if (brushAtt.includes(key)) {
+        this[key] = data[key];
+      }
+    }
+  }
+}
+const retBrushAtt = [
+  "brushId",
+  "boardId",
+  "userId",
+  "type",
+  "data",
+  "x",
+  "y",
+  "width",
+  "height",
+  "createdTime",
+];
+class retBrushData {
+  constructor(data) {
+    for (let key in data) {
+      if (retBrushAtt.includes(key)) {
         this[key] = data[key];
       }
     }
@@ -94,4 +116,22 @@ const brushDelect = async (data) => {
   return "OK";
 };
 
-module.exports = { brushAdd, boardAdd, brushUpdate, brushDelect };
+/**
+ * @description: 获取白板信息
+ * @param {boardId}
+ * @return {message: 返回信息}
+ **/
+const getBoard = async (boardId) => {
+  let sqlStr = `select * from brush where boardId = '` + boardId + `'`;
+  let result = await linkQuery(sqlStr);
+  if (result === -1) return -1;
+  let boardList = result
+    .filter((item) => item.delected === 0 && item.revised === 0)
+    .map((item) => {
+      const buffer = Buffer.from(item.data);
+      item.data = buffer.toString('utf-8');
+      return new retBrushData(item);
+    });
+  return boardList;
+};
+module.exports = { brushAdd, boardAdd, brushUpdate, brushDelect, getBoard };

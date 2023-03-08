@@ -1,58 +1,66 @@
 // 绘制数据接口
 export interface DrawInfo {
-  type: string,
-  data: BrushPath | TextPath | ImagePath | RectPath | RoundPath | Array<BrushPath> | string | null,
-  checked?: boolean,
-  x?: number,
-  y?: number,
-  width?: number,
-  height?: number,
-  boardId: string | null,
-  brushId: string,
-  userId: string,
+  type: string;
+  data:
+    | BrushPath
+    | TextPath
+    | ImagePath
+    | RectPath
+    | RoundPath
+    | Array<BrushPath>
+    | string
+    | null;
+  checked?: boolean;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  boardId: string | null;
+  brushId: string;
+  userId: string;
 }
 // Brush 数据类型接口
 export interface BrushPath {
-  lastX: number | null,
-  lastY: number | null,
-  beginY: number | null,
-  beginX: number | null,
-  strokeStyle?: string,
-  lineWidth?: number
+  lastX: number | null;
+  lastY: number | null;
+  beginY: number | null;
+  beginX: number | null;
+  strokeStyle?: string;
+  lineWidth?: number;
 }
 // Text 数据类型接口
 export interface TextPath {
-  x: number,
-  y: number,
-  text: string,
-  fontFamily: string,
-  fontWidth: string,
-  fontColor: string,
+  x: number;
+  y: number;
+  text: string;
+  fontFamily: string;
+  fontWidth: string;
+  fontColor: string;
 }
 // image 数据类型接口
 export interface ImagePath {
-  x: number,
-  y: number,
-  src: string,
-  width: number,
-  height: number
+  x: number;
+  y: number;
+  src: string;
+  width: number;
+  height: number;
 }
 // 矩形数据类型接口
 export interface RectPath {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  strokeStyle?: string,
-  lineWidth?: number
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  strokeStyle?: string;
+  lineWidth?: number;
 }
 // 圆形数据接口
 export interface RoundPath {
-  x: number,
-  y: number,
-  radus: number,
-  strokeStyle?: string,
-  lineWidth?: number
+  x: number;
+  y: number;
+  radus: number;
+  strokeStyle?: string;
+  lineWidth?: number;
 }
 
 // 绘制路径数组
@@ -60,11 +68,11 @@ export function drawArr(infoArr: Array<DrawInfo>, useCtx: any, canvas: any) {
   let rect = canvas!.getBoundingClientRect();
   useCtx.clearRect(rect.x, rect.y, rect.width, rect.height);
   try {
-    infoArr.map(item => {
+    infoArr.map((item) => {
       if (item.checked) return;
       draw(item, useCtx);
       // 绘制被选中的笔迹
-    })
+    });
   } catch (err) {
     console.log(err);
   }
@@ -75,31 +83,29 @@ export function draw(info: DrawInfo, useCtx: any) {
   try {
     useCtx.save();
     switch (info.type) {
-      case 'brush': {
+      case "brush": {
         if (Array.isArray(info.data)) {
-          (info.data as Array<BrushPath>).map(
-            brushItem => {
-              drawBrush(brushItem, useCtx);
-            }
-          )
+          (info.data as Array<BrushPath>).map((brushItem) => {
+            drawBrush(brushItem, useCtx);
+          });
         } else {
           drawBrush(info.data as BrushPath, useCtx);
         }
         break;
       }
-      case 'text': {
+      case "text": {
         drawText(info.data as TextPath, useCtx);
         break;
       }
-      case 'image': {
+      case "image": {
         drawImage(info.data as ImagePath, useCtx);
         break;
       }
-      case 'rect': {
+      case "rect": {
         drawRect(info.data as RectPath, useCtx);
         break;
       }
-      case 'round': {
+      case "round": {
         drawRound(info.data as RoundPath, useCtx);
         break;
       }
@@ -112,19 +118,21 @@ export function draw(info: DrawInfo, useCtx: any) {
 
 // 笔迹移动
 export function moveDraw(moveX: number, moveY: number, moveBrush: any) {
-  if (moveBrush.type === 'brush') {
+  if (moveBrush.type === "brush") {
     moveBrush.data.map((item: any) => {
-      item.beginX = item.beginX === null ? null : item.beginX + moveX;
-      item.beginY = item.beginY === null ? null : item.beginY + moveY;
-      item.lastX += moveX;
-      item.lastY += moveY;
-    })
+      item.beginX =
+        item.beginX === null ? null : Number(item.beginX) + Number(moveX);
+      item.beginY =
+        item.beginY === null ? null : Number(item.beginY) + Number(moveY);
+      item.lastX = Number(item.lastX) + moveX;
+      item.lastY = Number(item.lastY) + moveY;
+    });
   } else {
-    moveBrush.data.x += moveX;
-    moveBrush.data.y += moveY;
+    moveBrush.data.x = Number(moveBrush.data.x) + moveX;
+    moveBrush.data.y = Number(moveBrush.data.y) + moveY;
   }
-  moveBrush.x += moveX;
-  moveBrush.y += moveY;
+  moveBrush.x = Number(moveBrush.x) + moveX;
+  moveBrush.y = Number(moveBrush.y) + moveY;
   return moveBrush;
 }
 
@@ -165,7 +173,7 @@ function drawImage(path: ImagePath, useCtx: any) {
     useCtx.beginPath();
     useCtx.drawImage(image, path.x, path.y, path.width, path.height);
     useCtx.stroke();
-  }
+  };
 }
 
 // 矩形类型绘制
@@ -190,12 +198,16 @@ function drawRound(path: RoundPath, useCtx: any) {
 export function drawBeClick(path: DrawInfo, useCtx: any, canvas: any) {
   let rect = canvas!.getBoundingClientRect();
   useCtx.clearRect(rect.x, rect.y, rect.width, rect.height);
+  let pathWidth = Number(path.width),
+    pathHeight = Number(path.height),
+    pathY = Number(path.y),
+    pathX = Number(path.x);
   draw(path, useCtx);
   useCtx.save();
-  let x = path.width as number > 0 ? path.x as number - 10 : path.x as number + 10;
-  let y = path.height as number > 0 ? path.y as number - 10 : path.y as number + 10;
-  let width = path.width as number > 0 ? path.width as number + 20 : path.width as number - 20;
-  let height = path.height as number > 0 ? path.height as number + 20 : path.height as number - 20;
+  let x = pathWidth > 0 ? pathX - 10 : pathX + 10;
+  let y = pathHeight > 0 ? pathY - 10 : pathY + 10;
+  let width = pathWidth > 0 ? pathWidth + 20 : pathWidth - 20;
+  let height = pathWidth > 0 ? pathHeight + 20 : pathHeight - 20;
   useCtx.strokeStyle = "black";
   useCtx.lineWidth = 2;
   useCtx.setLineDash([5]);
