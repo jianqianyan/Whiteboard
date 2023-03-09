@@ -14,6 +14,7 @@ router.post("/brushAdd", async (req, res) => {
   let data = req.body;
   let brushdata = data.data;
   brushdata.createTime = data.createTime;
+  brushdata.snapshot = data.snapshot;
   let result = await brushAdd(brushdata);
   let retMe = new returnMessage();
   if (result !== -1) {
@@ -80,5 +81,6 @@ router.get("/boardInit", async (req, res) => {
   retMs.data = result === -1 ? [] : result;
   res.send(retMs);
 });
+
 
 module.exports = router;

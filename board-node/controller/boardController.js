@@ -56,6 +56,7 @@ class retBrushData {
  **/
 const brushAdd = async (data) => {
   let brushdata = new brushData(data);
+  saveSnap(data.boardId, data.snapshot);
   let result = await add("brush", brushdata);
   if (result !== -1) return "OK";
   else return -1;
@@ -69,6 +70,7 @@ const brushAdd = async (data) => {
  * 旧笔迹的revised改为1
  **/
 const brushUpdate = async (data) => {
+  saveSnap(data.data.boardId, data.snapshot);
   let newData = new brushData(data.data);
   let oldData = new brushData(data.data);
   newData.brushId = data.newBrushId;
@@ -106,9 +108,10 @@ const boardAdd = async (userId) => {
  * @return {message: 返回信息}
  **/
 const brushDelect = async (data) => {
-  let target = { brushId: data.brushId,  };
+  let target = { brushId: data.brushId };
   let message = { delected: 1 };
   let result = await update("brush", target, message, 1, 0);
+  saveSnap(data.boardId, data.snapshot);
   if (result === -1) return -1;
   message = { delectTime: data.Time };
   result = await update("brush", target, message, 0, 0);
@@ -129,9 +132,20 @@ const getBoard = async (boardId) => {
     .filter((item) => item.delected === 0 && item.revised === 0)
     .map((item) => {
       const buffer = Buffer.from(item.data);
-      item.data = buffer.toString('utf-8');
+      item.data = buffer.toString("utf-8");
       return new retBrushData(item);
     });
   return boardList;
+};
+
+/**
+ * @description: 保存白板快照
+ * @param {boardId: 白板id, snapData: 快照信息}
+ * @return {message: 返回信息}
+ **/
+const saveSnap = async (boardId, snapData) => {
+  let target = { boardId };
+  let message = { snapshot: snapData };
+  let result = await update("board", target, message, 0, 0);
 };
 module.exports = { brushAdd, boardAdd, brushUpdate, brushDelect, getBoard };
