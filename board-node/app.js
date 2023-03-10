@@ -4,6 +4,7 @@ const port = 3000;
 const { dbInit } = require("./until/db");
 const board = require("./routes/board");
 const user = require("./routes/user");
+const admin = require("./routes/admin");
 var cookieParser = require("cookie-parser");
 app.use(express.json({ limit: "100mb" }));
 app.use(
@@ -32,7 +33,13 @@ app.use(
     secret: SECRET_KEY,
     algorithms: ["HS256"], // 使用何种加密算法解析
   }).unless({
-    path: ["/public", "/user/login", "/user/register", "/board/boardInit"],
+    path: [
+      "/public",
+      "/user/login",
+      "/user/register",
+      "/board/boardInit",
+      "/admin/getBoardList",
+    ],
   })
 );
 const tokenhandler = require("./middleware/tokenhandler");
@@ -40,6 +47,7 @@ app.use(tokenhandler);
 
 app.use("/board", board);
 app.use("/user", user);
+app.use("/admin", admin);
 app.use("/public", express.static("public"));
 app.get("/", async (req, res) => {
   let sqlStr = "Hello";

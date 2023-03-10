@@ -54,3 +54,9 @@ Wed, 08 Mar 2023 14:45:58 GMT
 ER_BAD_FIELD_ERROR: Unknown column 'undefined' in 'field list'
 Wed, 08 Mar 2023 14:48:16 GMT
 ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '22:48:16 where brushId='u1tATMLSZ3025'' at line 1
+Fri, 10 Mar 2023 10:52:43 GMT
+ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(0,0)' at line 1
+Fri, 10 Mar 2023 10:54:20 GMT
+ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(0,10)' at line 1
+Fri, 10 Mar 2023 10:54:31 GMT
+ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(10,20)' at line 1
