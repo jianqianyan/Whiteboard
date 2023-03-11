@@ -39,6 +39,7 @@ app.use(
       "/user/register",
       "/board/boardInit",
       "/admin/getBoardList",
+      "/admin/getUserList"
     ],
   })
 );
