@@ -10,12 +10,33 @@ class userData {
     }
   }
 }
+const retBrushAtt = [
+  "brushId",
+  "boardId",
+  "userId",
+  "type",
+  "data",
+  "x",
+  "y",
+  "width",
+  "height",
+  "createdTime",
+];
+class retBrushData {
+  constructor(data) {
+    for (let key in data) {
+      if (retBrushAtt.includes(key)) {
+        this[key] = data[key];
+      }
+    }
+  }
+}
 
 const getBoardList = async (data) => {
   let page = Number(data.page) || 1;
   let pageSize = Number(data.pageSize) || 10;
   let begin = (page - 1) * pageSize;
-  let end = page * pageSize;
+  let end = pageSize;
   let limit = ` limit ` + begin + `,` + end;
   let sqlstr = `select * from board `;
   let condition = ``;
@@ -34,14 +55,22 @@ const getBoardList = async (data) => {
   sqlstr += condition;
   sqlstr += limit;
   let boardList = await linkQuery(sqlstr);
-  let list = boardList.map((item) => {
-    if (item.snapshot) {
-      const buffer = Buffer.from(item.snapshot);
-      item.snapshot = buffer.toString("utf-8");
-    }
-    return item;
-  });
-
+  let list = await Promise.all(
+    boardList.map(async (item) => {
+      let brushsql =
+        `select * from brush where boardId like '` + item.boardId + `'`;
+      let brushList = await linkQuery(brushsql);
+      brushList = brushList.map((item) => {
+        if (item.data) {
+          const buffer = Buffer.from(item.data);
+          item.data = buffer.toString("utf-8");
+          return new retBrushData(item);
+        }
+      });
+      item.data = brushList;
+      return item;
+    })
+  );
   let totalsql = `select count(*) from board ` + condition;
   let totalArr = await linkQuery(totalsql);
   let total;
@@ -59,7 +88,7 @@ const getUserList = async (data) => {
   let page = Number(data.page) || 1;
   let pageSize = Number(data.pageSize) || 10;
   let begin = (page - 1) * pageSize;
-  let end = page * pageSize;
+  let end = pageSize;
   let limit = ` limit ` + begin + `,` + end;
   let sqlstr = `select * from user`;
   let condition = ``;

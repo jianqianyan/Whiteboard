@@ -4,8 +4,8 @@
       <div class="search-box">
         <div class="input-box">
           <div class="left-box">
-            <div class="input-text">手机号</div>
-            <el-input v-model="userPhone" size="small"></el-input>
+            <div class="input-text">用户id</div>
+            <el-input v-model="userId" size="small"></el-input>
           </div>
           <div class="right-box">
             <div class="input-text">用户名称</div>
@@ -13,13 +13,13 @@
           </div>
         </div>
         <div class="button-box">
-          <el-button>搜索</el-button>
+          <el-button @click="search()">搜索</el-button>
           <el-button>清空</el-button>
         </div>
       </div>
-      <el-table :data="userdata" style="width: 100%">
-        <el-table-column prop="id" label="用户id"></el-table-column>
-        <el-table-column prop="name" label="用户名称"></el-table-column>
+      <el-table :data="userdata" style="width: 100%" v-loading="loading">
+        <el-table-column prop="userId" label="用户id"></el-table-column>
+        <el-table-column prop="userName" label="用户名称"></el-table-column>
         <el-table-column prop="phone" label="手机号"></el-table-column>
         <el-table-column prop="createTime" label="创建时间"></el-table-column>
         <el-table-column prop="email" label="用户邮箱"></el-table-column>
@@ -49,38 +49,57 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-let userPhone = ref("");
+import API from "../../plugin/axios/axiosInstance";
+import { ref, onBeforeMount } from "vue";
+import { ElMessage } from "element-plus";
+let userId = ref("");
 let userName = ref("");
 let total = ref(100);
 let pageNum = ref(1);
 let pageSize = ref(10);
-const userdata = reactive([
-  {
-    id: "0001",
-    name: "千言",
-    phone: "10010",
-    createTime: "2022-3-3 21:02",
-    email: "10010@qq.com",
-  },
-  {
-    id: "0002",
-    name: "千言",
-    phone: "10010",
-    createTime: "2022-3-3 21:02",
-    email: "10010@qq.com",
-  },
-  {
-    id: "0002",
-    name: "千言",
-    phone: "10010",
-    createTime: "2022-3-3 21:02",
-    email: "10010@qq.com",
-  },
-]);
+let loading = ref(false);
+const userdata = ref([]);
 const handleClick = (data: any) => {
   console.log(data.$index);
 };
+const search = () => {
+  getUserList();
+};
+const getUserList = () => {
+  loading.value = true;
+  (API as any)({
+    url: "/admin/getUserList",
+    methods: "get",
+    params: {
+      page: pageNum.value,
+      pageSize: pageSize.value,
+      userName: userName.value,
+      userId: userId.value,
+    },
+  })
+    .then((res: any) => {
+      if (res.data.status === 200) {
+        userdata.value = res.data.data;
+        total.value = res.data.total;
+      } else {
+        ElMessage({
+          type: "warning",
+          message: res.data.message,
+        });
+      }
+      loading.value = false;
+    })
+    .catch((err: any) => {
+      ElMessage({
+        type: "error",
+        message: err.message,
+      });
+      loading.value = false;
+    });
+};
+onBeforeMount(() => {
+  getUserList();
+});
 </script>
 <style scoped lang="less">
 .user-page {

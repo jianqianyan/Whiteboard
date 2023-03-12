@@ -10,6 +10,7 @@ router.get("/getBoardList", async (req, res) => {
   retMs.data = result.data === -1 ? [] : result.data;
   retMs.status = result.data === -1 ? 404 : 200;
   retMs.total = result.total;
+  retMs.message = result.data === -1 ? "没有找到" : "查找成功";
   res.send(retMs);
 });
 
@@ -19,6 +20,7 @@ router.get("/getUserList", async (req, res) => {
   let result = await getUserList(data);
   retMs.data = result.data === -1 ? [] : result.data;
   retMs.status = result.data === -1 ? 404 : 200;
+  retMs.message = result.data === -1 ? "没有找到" : "查找成功";
   retMs.total = result.total;
   res.send(retMs);
 });

@@ -56,7 +56,6 @@ class retBrushData {
  **/
 const brushAdd = async (data) => {
   let brushdata = new brushData(data);
-  saveSnap(data.boardId, data.snapshot);
   let result = await add("brush", brushdata);
   if (result !== -1) return "OK";
   else return -1;
@@ -70,7 +69,6 @@ const brushAdd = async (data) => {
  * 旧笔迹的revised改为1
  **/
 const brushUpdate = async (data) => {
-  saveSnap(data.data.boardId, data.snapshot);
   let newData = new brushData(data.data);
   let oldData = new brushData(data.data);
   newData.brushId = data.newBrushId;
@@ -111,7 +109,6 @@ const brushDelect = async (data) => {
   let target = { brushId: data.brushId };
   let message = { delected: 1 };
   let result = await update("brush", target, message, 1, 0);
-  saveSnap(data.boardId, data.snapshot);
   if (result === -1) return -1;
   message = { delectTime: data.Time };
   result = await update("brush", target, message, 0, 0);

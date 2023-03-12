@@ -332,7 +332,7 @@ function handleMouseUp() {
         boardId: boardId,
       };
       pathArr.push(drawInfo);
-      brushAdd(drawInfo, getSnapshot(canvas));
+      brushAdd(drawInfo);
 
       pathInfo = {
         lastX: null,
@@ -356,7 +356,7 @@ function handleMouseUp() {
         }
         return;
       }
-      brushAdd(pathArr[pathArr.length - 1], getSnapshot(canvas));
+      brushAdd(pathArr[pathArr.length - 1]);
       drawArr(pathArr, ctx, canvas);
     }
     case 0: {
@@ -364,7 +364,7 @@ function handleMouseUp() {
       bemoved = false;
       if (beclicked !== -1) {
         let newBrushId = timesTamp(baseBrushId());
-        brushUpdate(pathArr[beclicked], newBrushId, getSnapshot(canvas));
+        brushUpdate(pathArr[beclicked], newBrushId);
       }
     }
   }
@@ -389,7 +389,6 @@ const operationClick = (val: any) => {
           Time: sqlTime(),
           brushId: pathArr[lasetDelect].brushId,
           boardId: pathArr[lasetDelect].boardId,
-          snapshot: getSnapshot(canvas),
         };
         API({
           url: "/board/brushDelect",
@@ -427,7 +426,7 @@ const userChange = (val: any) => {
         pathArr.forEach((item) => {
           item.boardId = boardId;
           item.userId = userId.value;
-          brushAdd(item, getSnapshot(canvas));
+          brushAdd(item);
         });
         onlyWatch.value = false;
         drawMethod.value = 0;
@@ -478,7 +477,7 @@ const textEntry = (val: any) => {
   pathArr.push(drawInfo);
   textInputShow.value = false;
   ctx.stroke();
-  brushAdd(drawInfo, getSnapshot(canvas));
+  brushAdd(drawInfo);
 };
 
 // 图片上传结束
@@ -503,13 +502,9 @@ const imgUpload = (val: any) => {
   };
   pathArr.push(drawInfo);
   draw(drawInfo, ctx);
-  brushAdd(drawInfo, getSnapshot(canvas));
+  brushAdd(drawInfo);
 };
 
-// 获取快照
-const getSnapshot = (canvas: any) => {
-  return canvas.toDataURL();
-};
 
 onMounted(async () => {
   let newCanvas: any = canvasInit("#drawCanvas");

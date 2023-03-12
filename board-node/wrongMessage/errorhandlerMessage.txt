@@ -140,3 +140,7 @@ Fri, 10 Mar 2023 10:51:30 GMT
 UnauthorizedError: No authorization token was foundUnauthorizedError
 Fri, 10 Mar 2023 10:52:23 GMT
 UnauthorizedError: No authorization token was foundUnauthorizedError
+Sat, 11 Mar 2023 15:39:59 GMT
+UnauthorizedError: No authorization token was foundUnauthorizedError
+Sun, 12 Mar 2023 14:54:26 GMT
+UnauthorizedError: jwt expiredUnauthorizedError

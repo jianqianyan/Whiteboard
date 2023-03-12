@@ -60,3 +60,21 @@ Fri, 10 Mar 2023 10:54:20 GMT
 ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(0,10)' at line 1
 Fri, 10 Mar 2023 10:54:31 GMT
 ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(10,20)' at line 1
+Sun, 12 Mar 2023 15:38:43 GMT
+ER_DATA_TOO_LONG: Data too long for column 'snapshot' at row 1
+Sun, 12 Mar 2023 15:38:49 GMT
+ER_DATA_TOO_LONG: Data too long for column 'snapshot' at row 1
+Sun, 12 Mar 2023 15:38:54 GMT
+ER_DATA_TOO_LONG: Data too long for column 'snapshot' at row 1
+Sun, 12 Mar 2023 15:38:55 GMT
+ER_DATA_TOO_LONG: Data too long for column 'snapshot' at row 1
+Sun, 12 Mar 2023 15:38:55 GMT
+ER_DATA_TOO_LONG: Data too long for column 'snapshot' at row 1
+Sun, 12 Mar 2023 15:39:05 GMT
+ER_DATA_TOO_LONG: Data too long for column 'snapshot' at row 1
+Sun, 12 Mar 2023 17:04:36 GMT
+ER_DATA_TOO_LONG: Data too long for column 'data' at row 1
+Sun, 12 Mar 2023 17:04:37 GMT
+ER_DATA_TOO_LONG: Data too long for column 'data' at row 1
+Sun, 12 Mar 2023 17:09:52 GMT
+ER_DATA_TOO_LONG: Data too long for column 'data' at row 1
