@@ -14,7 +14,7 @@
         </div>
         <div class="button-box">
           <el-button @click="search()">搜索</el-button>
-          <el-button>清空</el-button>
+          <el-button @click="empty()">清空</el-button>
         </div>
       </div>
       <el-table :data="userdata" style="width: 100%" v-loading="loading">
@@ -39,10 +39,10 @@
       <div class="pagination">
         <el-pagination
           :page-size="pageSize"
-          :pager-count="11"
           layout="prev, pager, next"
           :total="total"
           v-model:current-page="pageNum"
+          @current-change="handleCurrentChange"
         />
       </div>
     </div>
@@ -96,6 +96,13 @@ const getUserList = () => {
       });
       loading.value = false;
     });
+};
+const handleCurrentChange = () => {
+  getUserList();
+};
+const empty = () => {
+  userId.value = "";
+  userName.value = "";
 };
 onBeforeMount(() => {
   getUserList();

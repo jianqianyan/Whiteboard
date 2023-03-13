@@ -13,20 +13,48 @@
           </div>
         </div>
         <div class="button-box">
-          <el-button>搜索</el-button>
-          <el-button>清空</el-button>
+          <el-button @click="search()">搜索</el-button>
+          <el-button @click="empty()">清空</el-button>
         </div>
       </div>
-      <div class="boardList-box">
+      <div class="boardList-box" v-loading="loading">
         <div
           class="list-son"
           v-for="(item, index) in boardData"
           :key="index + 'boardson'"
+          @click="watchCanvas(index)"
         >
-          <ex-canvas :brushData="item.data"></ex-canvas>
+          <ex-canvas
+            :brushData="item.data"
+            :size="10"
+            :key="item.boardId"
+            :width="200"
+            :height="100"
+          ></ex-canvas>
         </div>
       </div>
+      <div class="pagination">
+        <el-pagination
+          :page-size="pageSize"
+          :total="total"
+          layout="prev, pager, next"
+          v-model:current-page="pageNum"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
+    <el-dialog v-model="dialogVisble"
+      ><div class="dialog-box">
+        <ex-canvas
+          :brushData="dialogCanvas.data"
+          :size="5"
+          :key="dialogCanvas.boardId"
+          :width="400"
+          :height="200"
+        >
+        </ex-canvas>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
@@ -39,8 +67,12 @@ let userId = ref("");
 let pageSize = ref(10);
 let pageNum = ref(1);
 let total = ref(0);
+let loading = ref(false);
 const boardData = ref();
+const dialogVisble = ref(false);
+const dialogCanvas = ref({ data: "", boardId: "" });
 const getBoardList = async () => {
+  loading.value = true;
   (API as any)({
     url: "/admin/getBoardList",
     methods: "get",
@@ -62,13 +94,29 @@ const getBoardList = async () => {
           message: res.data.message,
         });
       }
+      loading.value = false;
     })
     .catch((err: any) => {
       ElMessage({
         type: "error",
         message: err.message,
       });
+      loading.value = false;
     });
+};
+const handleCurrentChange = () => {
+  getBoardList();
+};
+const search = () => {
+  getBoardList();
+};
+const empty = () => {
+  userId.value = "";
+  boardId.value = "";
+};
+const watchCanvas = (index: number) => {
+  dialogVisble.value = true;
+  dialogCanvas.value = boardData.value[index];
 };
 onMounted(() => {
   getBoardList();
@@ -112,18 +160,49 @@ onMounted(() => {
     }
     .boardList-box {
       width: 100%;
-      height: 600px;
+      height: 500px;
+      margin-top: 20px;
       .list-son {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 250px;
-        box-shadow: 0px 0px 10px rgb(44 51 73 / 5%);
-        border-style: solid;
-        border-width: 1px;
+        width: 18%;
+        margin: 10px;
+        box-shadow: 0px 0px 10px rgb(44 51 73 / 30%);
         float: left;
+        transition: all 0.3s;
+      }
+      .list-son:hover {
+        animation: float 0.3s ease-in-out;
+        transform: translateY(-3px);
+        box-shadow: 5px 5px 10px rgb(44 51 73 / 30%);
       }
     }
+    .pagination {
+      width: 100%;
+      display: flex;
+      justify-content: end;
+    }
   }
+}
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+    box-shadow: 0px 0px 10px rgb(44 51 73 / 30%);
+  }
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 10px rgb(44 51 73 / 30%);
+  }
+  100% {
+    transform: translateY(-3px);
+    box-shadow: 5px 5px 10px rgb(44 51 73 / 30%);
+  }
+}
+.dialog-box {
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
