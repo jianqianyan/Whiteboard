@@ -123,4 +123,16 @@ const getUserList = async (data) => {
   return { data: list.length > 0 ? list : -1, total };
 };
 
-module.exports = { getBoardList, getUserList };
+const login = async (phone, password) => {
+  let admin = await linkQuery(`select * from admin where Phone='` + phone + `'`);
+  let adminId = -1;
+  if (admin.length > 0) {
+    let adminPassword = admin[0].Password;
+    if (adminPassword === password) {
+      adminId = admin[0].AdminId;
+    }
+  }
+  return adminId;
+}
+
+module.exports = { getBoardList, getUserList, login };

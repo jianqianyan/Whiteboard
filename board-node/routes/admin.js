@@ -1,6 +1,11 @@
 var express = require("express");
+const jwt = require("../until/token");
 var router = express.Router();
-const { getBoardList, getUserList } = require("../controller/adminController");
+const {
+  getBoardList,
+  getUserList,
+  login,
+} = require("../controller/adminController");
 const returnMessage = require("../until/returnMessage");
 
 router.get("/getBoardList", async (req, res) => {
@@ -22,6 +27,33 @@ router.get("/getUserList", async (req, res) => {
   retMs.status = result.data === -1 ? 404 : 200;
   retMs.message = result.data === -1 ? "没有找到" : "查找成功";
   retMs.total = result.total;
+  res.send(retMs);
+});
+
+router.post("/login", async (req, res) => {
+  let data = req.body;
+  let retMs = new returnMessage();
+  if (!data.hasOwnProperty("phone") || !data.hasOwnProperty("password")) {
+    retMs.status = 404;
+    retMs.message = "账号或密码不能为空";
+    res.send(retMs);
+    return;
+  }
+  let admin = await login(data.phone, data.password);
+  if (admin === -1) {
+    retMs.status = 404;
+    retMs.message = "账号密码错误";
+  } else {
+    let ip = req.ip || req.connection.remoteAddress;
+    let tokenData = { adminId: admin, ip: ip };
+    let token = jwt(tokenData);
+    retMs.status = 200;
+    retMs.message = "登录成功";
+    retMs.data = {
+      token,
+      adminId: admin,
+    };
+  }
   res.send(retMs);
 });
 
