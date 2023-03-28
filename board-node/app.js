@@ -38,8 +38,6 @@ app.use(
       "/user/login",
       "/user/register",
       "/board/boardInit",
-      "/admin/getBoardList",
-      "/admin/getUserList",
       "/admin/login"
     ],
   })

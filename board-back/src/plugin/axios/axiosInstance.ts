@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import router from "@/router";
 const API = axios.create({
   baseURL: "/api",
   timeout: 2000,
@@ -14,6 +14,19 @@ API.interceptors.request.use(
     return config;
   },
   (err) => {
+    return Promise.reject(err);
+  }
+);
+
+API.interceptors.response.use(
+  (response: any) => {
+    return response;
+  },
+  (err: any) => {
+    switch (err.response.status) {
+      case 401:
+        router.push("/login");
+    }
     return Promise.reject(err);
   }
 );
