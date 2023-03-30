@@ -45,14 +45,23 @@
     </div>
     <el-dialog v-model="dialogVisble"
       ><div class="dialog-box">
-        <ex-canvas
-          :brushData="dialogCanvas.data"
-          :size="5"
-          :key="dialogCanvas.boardId"
-          :width="400"
-          :height="200"
-        >
-        </ex-canvas>
+        <div class="dialog-box-body">
+          <ex-canvas
+            :brushData="dialogCanvas.data"
+            :size="5"
+            :key="dialogCanvas.boardId"
+            :width="400"
+            :height="200"
+          >
+          </ex-canvas>
+          <div class="canvas-message">
+            <span>userId: {{ dialogCanvas.userId }}</span>
+            <span>创建时间: {{ dialogCanvas.createTime }}</span>
+          </div>
+          <div class="canvas-button">
+            <el-button>禁用</el-button>
+          </div>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -70,7 +79,7 @@ let total = ref(0);
 let loading = ref(false);
 const boardData = ref();
 const dialogVisble = ref(false);
-const dialogCanvas = ref({ data: "", boardId: "" });
+const dialogCanvas = ref({ data: "", boardId: "", userId: "", createTime: "" });
 const getBoardList = async () => {
   loading.value = true;
   (API as any)({
@@ -200,9 +209,31 @@ onMounted(() => {
   }
 }
 .dialog-box {
-  height: 600px;
+  height: 500px;
   display: flex;
   justify-content: center;
   align-items: center;
+  .dialog-box-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    .canvas-message {
+      width: 100%;
+      display: flex;
+      justify-content: end;
+      span {
+        display: flex;
+        align-items: center;
+        line-height: 25px;
+        padding-left: 5px;
+      }
+    }
+    .canvas-button {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 </style>

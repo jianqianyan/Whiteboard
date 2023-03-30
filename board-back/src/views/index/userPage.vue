@@ -23,7 +23,7 @@
         <el-table-column prop="phone" label="手机号"></el-table-column>
         <el-table-column prop="createTime" label="创建时间"></el-table-column>
         <el-table-column prop="email" label="用户邮箱"></el-table-column>
-        <el-table-column fixed="right" label="Operations" width="120">
+        <el-table-column fixed="right" label="操作" width="120">
           <template #default="scoped">
             <el-button
               link
@@ -32,7 +32,7 @@
               @click="handleClick(scoped)"
               >详情</el-button
             >
-            <el-button link type="primary" size="small">删除</el-button>
+            <el-button link type="primary" size="small">禁用</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -46,6 +46,9 @@
         />
       </div>
     </div>
+    <el-drawer v-model="drawer" title="I am the title" :with-header="false">
+      <span>Hi there!</span>
+    </el-drawer>
   </div>
 </template>
 <script setup lang="ts">
@@ -58,6 +61,7 @@ let total = ref(100);
 let pageNum = ref(1);
 let pageSize = ref(10);
 let loading = ref(false);
+let drawer = ref(false);
 const userdata = ref([]);
 const handleClick = (data: any) => {
   console.log(data.$index);
