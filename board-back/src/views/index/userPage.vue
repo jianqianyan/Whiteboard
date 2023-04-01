@@ -46,8 +46,18 @@
         />
       </div>
     </div>
-    <el-drawer v-model="drawer" title="I am the title" :with-header="false">
-      <span>Hi there!</span>
+    <el-drawer v-model="drawer" :with-header="false">
+      <div
+        v-for="(item, index) in Object.entries(newData)"
+        :key="index + 'info'"
+      >
+        <div class="userDish-name">{{ userDish[item[0]] }}</div>
+        <div class="userDish-value">{{ item[1] || "无" }}</div>
+      </div>
+      <div class="drawer-button">
+        <el-button>修改</el-button>
+        <el-button>保存</el-button>
+      </div>
     </el-drawer>
   </div>
 </template>
@@ -63,8 +73,17 @@ let pageSize = ref(10);
 let loading = ref(false);
 let drawer = ref(false);
 const userdata = ref([]);
+const newData = ref({});
+const userDish: { [key: string]: string } = {
+  userId: "用户id",
+  userName: "用户名称",
+  phone: "手机号",
+  email: "邮箱",
+  createTime: "创建时间",
+};
 const handleClick = (data: any) => {
-  console.log(data.$index);
+  drawer.value = true;
+  newData.value = userdata.value[data.$index];
 };
 const search = () => {
   getUserList();
@@ -154,5 +173,20 @@ onBeforeMount(() => {
       justify-content: end;
     }
   }
+}
+.userDish-name {
+  width: 100%;
+  height: 45px;
+  display: flex;
+  align-items: center;
+}
+.userDish-value {
+  width: 100%;
+  height: 45px;
+  display: flex;
+  align-items: center;
+}
+.drawer-button {
+  margin-top: 20px;
 }
 </style>
