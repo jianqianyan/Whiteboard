@@ -1,6 +1,6 @@
 const { linkQuery } = require("../until/sqlSever");
 
-const userArr = ["userId", "userName", "phone", "email", "createTime"];
+const userArr = ["userId", "userName", "phone", "email", "createTime", "Available"];
 class userData {
   constructor(data) {
     for (let key in data) {
