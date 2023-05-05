@@ -57,17 +57,39 @@
         />
       </div>
     </div>
-    <el-drawer v-model="drawer" :with-header="false">
+    <el-drawer v-model="drawer" :with-header="false" :close="drawerClose()">
       <div
         v-for="(item, index) in Object.entries(newData)"
         :key="index + 'info'"
       >
         <div class="userDish-name">{{ userDish[item[0]] }}</div>
-        <div class="userDish-value">{{ item[1] || "无" }}</div>
+        <div class="userDish-value">
+          <div v-if="changeFlag">
+            {{
+              item[0] == "Available"
+                ? item[1] == 1
+                  ? "是"
+                  : "否"
+                : item[1] || "无"
+            }}
+          </div>
+          <div v-else>
+            <el-input
+              size="small"
+              v-model="newData[item[0]]"
+              :disabled="checkDisabled(item[0])"
+            ></el-input>
+          </div>
+        </div>
       </div>
       <div class="drawer-button">
-        <el-button>修改</el-button>
-        <el-button>保存</el-button>
+        <div class="change-box" v-if="changeFlag">
+          <el-button @click="userChange()">修改</el-button>
+        </div>
+        <div class="save-box" v-else>
+          <el-button @click="userSave()">保存</el-button>
+          <el-button @click="userCancel()">取消</el-button>
+        </div>
       </div>
     </el-drawer>
     <el-dialog v-model="dialogVisible" title="提示" width="30%">
@@ -87,6 +109,15 @@
 import API from "../../plugin/axios/axiosInstance";
 import { ref, onBeforeMount } from "vue";
 import { ElMessage } from "element-plus";
+interface userData {
+  userId: string;
+  userName: string;
+  phone: string;
+  email: string;
+  createTime: string;
+  Available: number;
+  [key: string]: string | number;
+}
 let userId = ref("");
 let userName = ref("");
 let total = ref(100);
@@ -94,15 +125,17 @@ let pageNum = ref(1);
 let pageSize = ref(10);
 let loading = ref(false);
 let drawer = ref(false);
+let changeFlag = ref(true);
 const userdata = ref([]);
-const newData = ref({
+let new_data: userData = {
   userId: "",
   userName: "",
   phone: "",
   email: "",
   createTime: "",
   Available: 0,
-});
+};
+const newData = ref(new_data);
 const dialogVisible = ref(false);
 const userDish: { [key: string]: string } = {
   userId: "用户id",
@@ -123,6 +156,14 @@ const disableConfirm = (data: any) => {
 };
 const search = () => {
   getUserList();
+};
+const checkDisabled = (str: string) => {
+  const disArr = ["userId", "createTime", "Available"];
+  if (disArr.indexOf(str) != -1) {
+    return true;
+  } else {
+    return false;
+  }
 };
 const getUserList = () => {
   loading.value = true;
@@ -195,6 +236,23 @@ const empty = () => {
   userId.value = "";
   userName.value = "";
 };
+const userChange = () => {
+  changeFlag.value = false;
+};
+const userSave = () => {
+  changeFlag.value = true;
+  drawer.value = false;
+  userUpdate();
+  getUserList();
+};
+const userCancel = () => {
+  changeFlag.value = true;
+  drawer.value = false;
+  getUserList();
+};
+const drawerClose = () => {
+  changeFlag.value = true;
+};
 onBeforeMount(() => {
   getUserList();
 });
@@ -266,5 +324,13 @@ onBeforeMount(() => {
 
 .drawer-button {
   margin-top: 20px;
+
+  .change-box {
+    display: flex;
+  }
+
+  .save-box {
+    display: flex;
+  }
 }
 </style>
