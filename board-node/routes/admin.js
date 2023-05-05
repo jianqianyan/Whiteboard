@@ -5,6 +5,7 @@ const {
   getBoardList,
   getUserList,
   login,
+  userUpdate,
 } = require("../controller/adminController");
 const returnMessage = require("../until/returnMessage");
 
@@ -56,5 +57,25 @@ router.post("/login", async (req, res) => {
   }
   res.send(retMs);
 });
+
+router.post("/userUpdate", async (req, res) => {
+  let data = req.body;
+  let retMs = new returnMessage();
+  if (!data.hasOwnProperty('userId')) {
+    retMs.status = 404;
+    retMs.message = "缺少必要的参数";
+    res.send(retMs);
+    return;
+  }
+  let user = await userUpdate(data);
+  if (user == -1) {
+    retMs.status = 404;
+    retMs.message = "error";
+  } else {
+    retMs.status = 200;
+    retMs.message = "OK";
+  } 
+  res.send(retMs);
+})
 
 module.exports = router;

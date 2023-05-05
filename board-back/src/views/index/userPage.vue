@@ -75,7 +75,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">
+          <el-button type="primary" @click="confirmDisabled()">
             确认
           </el-button>
         </span>
@@ -95,7 +95,14 @@ let pageSize = ref(10);
 let loading = ref(false);
 let drawer = ref(false);
 const userdata = ref([]);
-const newData = ref({});
+const newData = ref({
+  userId: "",
+  userName: "",
+  phone: "",
+  email: "",
+  createTime: "",
+  Available: 0,
+});
 const dialogVisible = ref(false);
 const userDish: { [key: string]: string } = {
   userId: "用户id",
@@ -103,6 +110,7 @@ const userDish: { [key: string]: string } = {
   phone: "手机号",
   email: "邮箱",
   createTime: "创建时间",
+  Available: "是否可用",
 };
 const handleClick = (data: any) => {
   drawer.value = true;
@@ -120,7 +128,7 @@ const getUserList = () => {
   loading.value = true;
   (API as any)({
     url: "/admin/getUserList",
-    methods: "get",
+    method: "get",
     params: {
       page: pageNum.value,
       pageSize: pageSize.value,
@@ -150,6 +158,38 @@ const getUserList = () => {
 };
 const handleCurrentChange = () => {
   getUserList();
+};
+const userUpdate = () => {
+  (API as any)({
+    url: "/admin/userUpdate",
+    method: "post",
+    data: newData.value,
+  })
+    .then((res: any) => {
+      if (res.data.status == 200) {
+        ElMessage({
+          type: "success",
+          message: "更新成功",
+        });
+        getUserList();
+      } else {
+        ElMessage({
+          type: "warning",
+          message: res.data.message,
+        });
+      }
+    })
+    .catch((err: any) => {
+      ElMessage({
+        type: "error",
+        message: err.message,
+      });
+    });
+};
+const confirmDisabled = () => {
+  dialogVisible.value = false;
+  newData.value.Available = newData.value.Available == 0 ? 1 : 0;
+  userUpdate();
 };
 const empty = () => {
   userId.value = "";

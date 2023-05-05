@@ -1,6 +1,8 @@
 const { linkQuery } = require("../until/sqlSever");
 
 const userArr = ["userId", "userName", "phone", "email", "createTime", "Available"];
+const userConst = ["userId", "createTime"];
+
 class userData {
   constructor(data) {
     for (let key in data) {
@@ -135,4 +137,27 @@ const login = async (phone, password) => {
   return adminId;
 }
 
-module.exports = { getBoardList, getUserList, login };
+const userUpdate = async (data) => {
+  let userId = data.userId;
+  let message = {};
+  for (let key in data) {
+    if (userConst.indexOf(key) == -1) {
+      message[key] = data[key];
+    }
+  }
+  let sqlstr = `update user set `;
+  let sql1 = ``;
+  Object.keys(message).forEach((key) => {
+    if (sql1 != ``) sql1 += ',';
+    let mes = message[key]
+    if (typeof (message[key]) == 'string') {
+      mes = `'` + mes + `'`;
+    }
+    sql1 = sql1 + key + `=` + mes;
+  })
+  sqlstr = sqlstr + sql1 + ` where userId = ` + userId;
+  let res = await linkQuery(sqlstr);
+  return res == -1 ? -1 : "OK";
+}
+
+module.exports = { getBoardList, getUserList, login, userUpdate };
