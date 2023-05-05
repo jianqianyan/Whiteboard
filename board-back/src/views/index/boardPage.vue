@@ -31,6 +31,7 @@
             :width="200"
             :height="100"
           ></ex-canvas>
+          <div class="board-message">白板Id:{{ item.boardId }}</div>
         </div>
       </div>
       <div class="pagination">
@@ -175,8 +176,10 @@ onMounted(() => {
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         width: 18%;
         margin: 10px;
+        padding-bottom: 10px;
         box-shadow: 0px 0px 10px rgb(44 51 73 / 30%);
         float: left;
         transition: all 0.3s;

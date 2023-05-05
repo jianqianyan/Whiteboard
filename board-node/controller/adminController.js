@@ -62,7 +62,9 @@ const getBoardList = async (data) => {
       let brushsql =
         `select * from brush where boardId like '` + item.boardId + `'`;
       let brushList = await linkQuery(brushsql);
-      brushList = brushList.map((item) => {
+      brushList = brushList.filter((item) => {
+        return item.revised == 0;
+      }).map((item) => {
         if (item.data) {
           const buffer = Buffer.from(item.data);
           item.data = buffer.toString("utf-8");
