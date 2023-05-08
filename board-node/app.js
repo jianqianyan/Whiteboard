@@ -1,11 +1,14 @@
 const express = require("express");
 const app = express();
 const port = 3000;
+var expressWs = require('express-ws');
 const { dbInit } = require("./until/db");
 const board = require("./routes/board");
 const user = require("./routes/user");
 const admin = require("./routes/admin");
+const socket = require("./routes/socket")
 var cookieParser = require("cookie-parser");
+expressWs(app);
 app.use(express.json({ limit: "100mb" }));
 app.use(
   express.urlencoded({
@@ -28,6 +31,7 @@ app.use(cookieParser());
 // token 解析
 const expressJwt = require("express-jwt");
 const SECRET_KEY = "jianqianyan";
+app.use("/socket", socket); 
 app.use(
   expressJwt({
     secret: SECRET_KEY,
@@ -38,7 +42,7 @@ app.use(
       "/user/login",
       "/user/register",
       "/board/boardInit",
-      "/admin/login"
+      "/admin/login",
     ],
   })
 );

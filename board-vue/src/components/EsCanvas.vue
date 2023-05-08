@@ -61,6 +61,7 @@ let bemoved: boolean = false;
 let boardId = "1";
 let isPainting = ref(false);
 let onlyWatch = ref(false);
+let socket: any;
 const baseBrushId = () => {
   return "U" + userId.value + "B" + boardId + "T";
 };
@@ -431,7 +432,16 @@ const userChange = (val: any) => {
         onlyWatch.value = false;
         drawMethod.value = 0;
       }
-    });
+    }); 
+    socket = new WebSocket("ws://localhost:3000/socket/onlineBoard");
+    console.log(socket)
+    socket.onopen = function () {
+      console.log("socket link");
+      socket.send("aaa");
+    }
+    socket.onmessage = function(message: any) {
+      console.log(message);
+    }
   }
 };
 

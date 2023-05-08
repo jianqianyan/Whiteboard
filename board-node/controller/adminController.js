@@ -1,6 +1,8 @@
 const { linkQuery } = require("../until/sqlSever");
 
+// 返回的用户信息配置
 const userArr = ["userId", "userName", "phone", "email", "createTime", "Available"];
+// 在修改时需要筛去的用户信息
 const userConst = ["userId", "createTime"];
 
 class userData {
@@ -12,6 +14,7 @@ class userData {
     }
   }
 }
+// 返回的笔记信息配置
 const retBrushAtt = [
   "brushId",
   "boardId",
@@ -34,6 +37,11 @@ class retBrushData {
   }
 }
 
+/**
+ * @description: 获取后台白板list
+ * @param {data:{page: 当前页数,pageSize: 每一页的尺寸,boardId: 查询的boardId, userId: 查询的用户id}}
+ * @return {data: 白板list, total: list的长度}
+ **/
 const getBoardList = async (data) => {
   let page = Number(data.page) || 1;
   let pageSize = Number(data.pageSize) || 10;
@@ -42,18 +50,21 @@ const getBoardList = async (data) => {
   let limit = ` limit ` + begin + `,` + end;
   let sqlstr = `select * from board `;
   let condition = ``;
-  if (data.userId && data.boardId) {
-    condition =
-      `where boardId like '` +
-      data.boardId +
-      `' and userId like '` +
-      data.userId +
-      `'`;
-  } else if (data.userId) {
-    condition = `where userId like '` + data.userId + `'`;
-  } else if (data.boardId) {
-    condition = `where boardId like '` + data.boardId + `'`;
+  let dataConst = ["boardId", "userId"];
+  for (let key in data) {
+    if (dataConst.indexOf(key) != -1 && data[key]) {
+      if (condition != ``) {
+        condition += ` and `;
+      }
+      let mes = data[key];
+      if (typeof (mes) == 'string') {
+        mes = `'%` + mes + `%'`;
+      }
+      condition += key + ` like ` + mes;
+    }
   }
+  if (condition)
+    condition = `where ` + condition;
   sqlstr += condition;
   sqlstr += limit;
   let boardList = await linkQuery(sqlstr);
@@ -88,6 +99,11 @@ const getBoardList = async (data) => {
   return { data: list.length > 0 ? list : -1, total };
 };
 
+/**
+ * @description: 获取后台白板list
+ * @param {data:{page: 当前页数,pageSize: 每一页的尺寸,userName: 查询的userName, userId: 查询的用户id}}
+ * @return {data: 用户list, total: list的长度}
+ **/
 const getUserList = async (data) => {
   let page = Number(data.page) || 1;
   let pageSize = Number(data.pageSize) || 10;
@@ -96,18 +112,21 @@ const getUserList = async (data) => {
   let limit = ` limit ` + begin + `,` + end;
   let sqlstr = `select * from user`;
   let condition = ``;
-  if (data.userId && data.userName) {
-    condition =
-      ` where userId like '` +
-      data.userId +
-      `' and userName like '` +
-      data.userName +
-      `'`;
-  } else if (data.userId) {
-    condition = ` where userId like '` + data.userId + `'`;
-  } else if (data.userName) {
-    condition = ` where userName like '` + data.userName + `'`;
+  let dataConst = ["userId", "userName"];
+  for (let key in data) {
+    if (dataConst.indexOf(key) != -1 && data[key]) {
+      if (condition != ``) {
+        condition += ` and `;
+      }
+      let mes = data[key];
+      if (typeof (mes) == 'string') {
+        mes = `'%` + mes + `%'`;
+      }
+      condition += key + ` like ` + mes;
+    }
   }
+  if (condition)
+    condition = ` where ` + condition;
   sqlstr += condition;
   sqlstr += limit;
   let userList = await linkQuery(sqlstr);
@@ -139,6 +158,11 @@ const login = async (phone, password) => {
   return adminId;
 }
 
+/**
+ * @description: 修改用户信息
+ * @param {data:需要修改的用户信息}
+ * @return {message: 返回信息 -1为修改失败}
+ **/
 const userUpdate = async (data) => {
   let userId = data.userId;
   let message = {};
