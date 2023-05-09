@@ -334,6 +334,7 @@ function handleMouseUp() {
       };
       pathArr.push(drawInfo);
       brushAdd(drawInfo);
+      wsAdd(drawInfo.brushId);
 
       pathInfo = {
         lastX: null,
@@ -358,6 +359,7 @@ function handleMouseUp() {
         return;
       }
       brushAdd(pathArr[pathArr.length - 1]);
+      wsAdd(pathArr[pathArr.length - 1].brushId);
       drawArr(pathArr, ctx, canvas);
     }
     case 0: {
@@ -366,6 +368,7 @@ function handleMouseUp() {
       if (beclicked !== -1) {
         let newBrushId = timesTamp(baseBrushId());
         brushUpdate(pathArr[beclicked], newBrushId);
+        wsUpdata(pathArr[beclicked].brushId);
       }
     }
   }
@@ -402,12 +405,40 @@ const operationClick = (val: any) => {
           .catch((err) => {
             console.log(err);
           });
+        wsAdd(pathArr[lasetDelect].brushId);
         pathArr.splice(lasetDelect, 1);
         drawArr(pathArr, ctx, canvas);
       }
     }
   }
 };
+
+const wsLink = () => {
+  let ws_url = "ws://localhost:3000/socket/onlineBoard/?boardId=" + boardId;
+  socket = new WebSocket(ws_url);
+  socket.onopen = function () {
+      console.log("socket link");
+    }
+    socket.onmessage = function(message: any) {
+      console.log(message);
+    }
+}
+const wsUpdata = (brushId: string) => {
+  if (!socket) return;
+  socket.send(JSON.stringify({
+    code: 200,
+    brushId: brushId
+  })); 
+}
+const wsAdd = (brushId: string) => {
+  if (!socket) return;
+  setTimeout(() => {
+    socket.send(JSON.stringify({
+    code: 100,
+    brushId: brushId
+  }))
+  },500); 
+}
 
 // 用户信息改变
 const userChange = (val: any) => {
@@ -428,20 +459,13 @@ const userChange = (val: any) => {
           item.boardId = boardId;
           item.userId = userId.value;
           brushAdd(item);
+          wsAdd(item.brushId);
         });
         onlyWatch.value = false;
         drawMethod.value = 0;
+        wsLink();
       }
     }); 
-    socket = new WebSocket("ws://localhost:3000/socket/onlineBoard");
-    console.log(socket)
-    socket.onopen = function () {
-      console.log("socket link");
-      socket.send("aaa");
-    }
-    socket.onmessage = function(message: any) {
-      console.log(message);
-    }
   }
 };
 
@@ -488,6 +512,7 @@ const textEntry = (val: any) => {
   textInputShow.value = false;
   ctx.stroke();
   brushAdd(drawInfo);
+  wsAdd(drawInfo.brushId);
 };
 
 // 图片上传结束
@@ -513,6 +538,7 @@ const imgUpload = (val: any) => {
   pathArr.push(drawInfo);
   draw(drawInfo, ctx);
   brushAdd(drawInfo);
+  wsAdd(drawInfo.brushId);
 };
 
 
@@ -543,6 +569,8 @@ onMounted(async () => {
     }).then((res) => {
       if (res.data.status === 200) {
         userId.value = LocalUserId as string;
+      } else {
+        localStorage.removeItem("userId");
       }
     });
   }
@@ -568,6 +596,8 @@ onMounted(async () => {
     if (!LocalUserId) {
       onlyWatch.value = true;
       drawMethod.value = -1;
+    } else {
+      wsLink();
     }
   } else {
     if (LocalUserId) {
@@ -582,6 +612,7 @@ onMounted(async () => {
         if (res.data.status === 200) {
           userId.value = LocalUserId as string;
           boardId = res.data.data.boardId;
+          wsLink();
         }
       });
     }
