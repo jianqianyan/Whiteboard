@@ -1,24 +1,11 @@
 <template>
   <canvas className="canvas" id="drawCanvas"></canvas>
-  <canvas
-    className="paintingCanvas"
-    id="paintingCanvas"
-    v-if="isPainting"
-  ></canvas>
+  <canvas className="paintingCanvas" id="paintingCanvas" v-if="isPainting"></canvas>
   <OperationBox @operationEmits="operationClick"></OperationBox>
-  <configBox
-    @brushChange="brushChange"
-    @methodChange="methodChange"
-    :config="colorConfig"
-    v-if="!onlyWatch"
-  ></configBox>
+  <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig" v-if="!onlyWatch"></configBox>
   <textInput @textEntry="textEntry" v-show="textInputShow.value"></textInput>
   <ImgUp :imgupVisble="imgupVisble" @imgUpload="imgUpload"></ImgUp>
-  <Login
-    :loginVisible="loginVisible"
-    @userChange="userChange"
-    :userId="userId"
-  ></Login>
+  <Login :loginVisible="loginVisible" @userChange="userChange" :userId="userId"></Login>
 </template>
 
 <script setup lang="ts">
@@ -417,27 +404,38 @@ const wsLink = () => {
   let ws_url = "ws://localhost:3000/socket/onlineBoard/?boardId=" + boardId;
   socket = new WebSocket(ws_url);
   socket.onopen = function () {
-      console.log("socket link");
+    console.log("socket link");
+  }
+  socket.onmessage = function (message: any) {
+    if (message.data && message.data.indexOf('{') != -1) {
+      let brushData = JSON.parse(message.data);
+      brushData.data = JSON.parse(brushData.data);
+      let flag = 1;
+      pathArr.map(item => {
+        if (item.brushId === brushData.brushId) flag = 0;
+      })
+      if (flag) {
+        pathArr.push(brushData);
+      }
+      drawArr(pathArr, ctx, canvas);
     }
-    socket.onmessage = function(message: any) {
-      console.log(message);
-    }
+  }
 }
 const wsUpdata = (brushId: string) => {
   if (!socket) return;
   socket.send(JSON.stringify({
     code: 200,
     brushId: brushId
-  })); 
+  }));
 }
 const wsAdd = (brushId: string) => {
   if (!socket) return;
   setTimeout(() => {
     socket.send(JSON.stringify({
-    code: 100,
-    brushId: brushId
-  }))
-  },500); 
+      code: 100,
+      brushId: brushId
+    }))
+  }, 500);
 }
 
 // 用户信息改变
@@ -465,7 +463,7 @@ const userChange = (val: any) => {
         drawMethod.value = 0;
         wsLink();
       }
-    }); 
+    });
   }
 };
 

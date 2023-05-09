@@ -26,11 +26,10 @@ router.ws("/onlineBoard", function (ws, req) {
     if (mesData.code == 100) {
       let brushId = mesData.brushId;
       let data = await getBrushData(brushId);
-      console.log(data)
+      sub.map(item => {
+        item.send(JSON.stringify(data));
+      })
     }
-    sub.map(item => {
-      item.send("111");
-    })
   });
   ws.on("close", function () {
     console.log("close " + boardId);
