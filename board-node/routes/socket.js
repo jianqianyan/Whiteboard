@@ -7,7 +7,6 @@ expressWs(router);  //将 express 实例上绑定 websocket 的一些方法
 const ws_map = new Map();
 
 router.ws("/onlineBoard", function (ws, req) {
-  ws.send("你连接成功了");
   let boardId = req.query.boardId;
   if (boardId) {
     if (ws_map.has(boardId)) {
@@ -28,6 +27,14 @@ router.ws("/onlineBoard", function (ws, req) {
       let data = await getBrushData(brushId);
       sub.map(item => {
         item.send(JSON.stringify(data));
+      })
+    } else if (mesData.code == 200) {
+      let info = {
+        newBrushId: mesData.newBrushId,
+        drawInfo: mesData.drawInfo
+      }
+      sub.map(item => {
+        item.send(JSON.stringify(info));
       })
     }
   });

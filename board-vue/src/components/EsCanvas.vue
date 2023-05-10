@@ -355,7 +355,7 @@ function handleMouseUp() {
       if (beclicked !== -1) {
         let newBrushId = timesTamp(baseBrushId());
         brushUpdate(pathArr[beclicked], newBrushId);
-        wsUpdata(pathArr[beclicked].brushId);
+        wsUpdate(pathArr[beclicked], newBrushId);
       }
     }
   }
@@ -421,11 +421,12 @@ const wsLink = () => {
     }
   }
 }
-const wsUpdata = (brushId: string) => {
+const wsUpdate = (brushInfo: DrawInfo, newBrushId: string) => {
   if (!socket) return;
   socket.send(JSON.stringify({
     code: 200,
-    brushId: brushId
+    newBrushId,
+    brushInfo,
   }));
 }
 const wsAdd = (brushId: string) => {
