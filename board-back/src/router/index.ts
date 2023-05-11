@@ -5,6 +5,7 @@ import boardPage from "../views/index/boardPage.vue";
 import homePage from "../views/index/homePage.vue";
 import userPage from "../views/index/userPage.vue";
 import errorPage from "../views/index/errorPage.vue";
+import powerPage from "../views/index/powerPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
           path: "errorPage",
           name: "errorPage",
           component: errorPage,
+        },
+        {
+          path: "power",
+          name: "power",
+          component: powerPage,
         },
       ],
     },

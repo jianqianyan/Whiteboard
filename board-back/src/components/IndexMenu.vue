@@ -40,6 +40,26 @@ const menuList = [
     name: "报错",
     link: "/index/errorPage",
   },
+  {
+    name: "权限管理",
+    link: "/index/power",
+  },
+  {
+    name: "系统设置",
+    link: "/index/system",
+  },
+  {
+    name: "数据备份与恢复",
+    link: "/index/dataBackup",
+  },
+  {
+    name: "操作日志",
+    link: "/index/operation",
+  },
+  {
+    name: "帮助与支持",
+    link: "/index/help",
+  },
 ];
 let menu = reactive<routerClass[]>([]);
 let activeItem = ref<routerClass>();
