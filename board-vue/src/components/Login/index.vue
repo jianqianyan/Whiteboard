@@ -96,7 +96,7 @@
       <div class="user-dialog" v-else>
         <div class="user-name">{{ userData.userName }}</div>
         <div class="user-id">UID: {{ userId }}</div>
-        <button @click="">
+        <button @click="shareWhiteboard()">
           {{ $t("button.shareWhiteboard") }}
         </button>
         <button @click="logOut()">
@@ -124,7 +124,7 @@ let password = ref(null);
 let registerData = ref({ phone: null, password: null, confirmPassword: null });
 const userData = reactive({ phone: null, userName: null });
 
-const emits = defineEmits(["userChange"]);
+const emits = defineEmits(["userChange", "shareWhiteboard"]);
 watch(dialogVisible, (value) => {
   bodyVisible.value = value;
 });
@@ -141,6 +141,9 @@ function changeToTouristLogin() {
 }
 function returnChoose() {
   loginStatus.value = 0;
+}
+function shareWhiteboard() {
+  emits("shareWhiteboard", "1");
 }
 function login() {
   if (phone.value === null || password.value === null) {

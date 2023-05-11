@@ -39,6 +39,11 @@ router.ws("/onlineBoard", function (ws, req) {
       sub.map(item => {
         item.send(JSON.stringify(info));
       })
+    } else if (mesData.code == 300) {
+      let brushId = mesData.brushId;
+      sub.map(item => {
+        item.send(JSON.stringify({ data: { brushId }, code: 300 }));
+      })
     }
   });
   ws.on("close", function () {

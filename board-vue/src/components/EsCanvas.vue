@@ -5,7 +5,9 @@
   <configBox @brushChange="brushChange" @methodChange="methodChange" :config="colorConfig" v-if="!onlyWatch"></configBox>
   <textInput @textEntry="textEntry" v-show="textInputShow.value"></textInput>
   <ImgUp :imgupVisble="imgupVisble" @imgUpload="imgUpload"></ImgUp>
-  <Login :loginVisible="loginVisible" @userChange="userChange" :userId="userId"></Login>
+  <Login :loginVisible="loginVisible" @userChange="userChange" :userId="userId" @shareWhiteboard="shareWhiteboard()">
+  </Login>
+  <qrCode :url="boardUrl()" :urlVisible="urlVisible" @qrClosed="urlVisible = false"></qrCode>
 </template>
 
 <script setup lang="ts">
@@ -13,6 +15,7 @@ import OperationBox from "./ExCanvas/OperationBox.vue";
 import configBox from "./ExCanvas/ConfigBox.vue";
 import textInput from "./ExCanvas/textInput.vue";
 import ImgUp from "./ExCanvas/ImgUp.vue";
+import qrCode from "./ExCanvas/qrCode.vue"
 import { onMounted, reactive, ref, nextTick, computed } from "vue";
 import { canvasInit, ctxFormat } from "./ExCanvas/EsCanvas";
 import {
@@ -49,7 +52,16 @@ let bemoved: boolean = false;
 let boardId = "1";
 let isPainting = ref(false);
 let onlyWatch = ref(false);
+let urlVisible = ref(false);
 let socket: any;
+const boardUrl = () => {
+  let url = window.location.href;
+  if (url.includes("boardId")) {
+    return url;
+  } else {
+    return url + '?boardId=' + boardId;
+  }
+}
 const baseBrushId = () => {
   return "U" + userId.value + "B" + boardId + "T";
 };
@@ -393,7 +405,7 @@ const operationClick = (val: any) => {
           .catch((err) => {
             console.log(err);
           });
-        wsAdd(pathArr[lasetDelect].brushId);
+        wsDelect(pathArr[lasetDelect].brushId);
         pathArr.splice(lasetDelect, 1);
         drawArr(pathArr, ctx, canvas);
       }
@@ -412,9 +424,9 @@ const wsLink = () => {
       let data = JSON.parse(message.data);
       let brushData = data.data;
       let code = data.code;
-      brushData.data = JSON.parse(brushData.data);
       let flag = 1;
       if (code == 100) {
+        brushData.data = JSON.parse(brushData.data);
         pathArr.map(item => {
           if (item.brushId === brushData.brushId) flag = 0;
         })
@@ -423,6 +435,7 @@ const wsLink = () => {
         }
         drawArr(pathArr, ctx, canvas);
       } else if (code == 200) {
+        brushData.data = JSON.parse(brushData.data);
         let idx = -1;
         for (let i = 0; i < pathArr.length; ++i) {
           if (pathArr[i].brushId == data.oldBrushId) {
@@ -436,6 +449,19 @@ const wsLink = () => {
           brushData.checked = false;
           drawArr(pathArr, ctx, canvas);
         }
+      } else if (code == 300) {
+        let idx = -1;
+        for (let i = 0; i < pathArr.length; ++i) {
+          if (pathArr[i].brushId == brushData.brushId) {
+            idx = i;
+            break;
+          }
+        }
+        if (idx >= 0) {
+          pathArr.splice(idx, 1);
+          drawArr(pathArr, ctx, canvas);
+        }
+        console.log()
       }
     }
   }
@@ -458,6 +484,13 @@ const wsAdd = (brushId: string) => {
       brushId: brushId
     }))
   }, 500);
+}
+const wsDelect = (brushId: string) => {
+  if (!socket) return;
+  socket.send(JSON.stringify({
+    code: 300,
+    brushId,
+  }))
 }
 
 // 用户信息改变
@@ -561,6 +594,9 @@ const imgUpload = (val: any) => {
   wsAdd(drawInfo.brushId);
 };
 
+const shareWhiteboard = () => {
+  urlVisible.value = true;
+}
 
 onMounted(async () => {
   let newCanvas: any = canvasInit("#drawCanvas");
