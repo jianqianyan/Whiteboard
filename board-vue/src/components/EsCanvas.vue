@@ -30,6 +30,7 @@ import {
 } from "./ExCanvas/Brush";
 import { checkClick } from "../tools/checkClick";
 import { brushAdd, brushUpdate } from "./onlineFunctions";
+import _ from "lodash";
 import { timesTamp } from "../tools/generalTools";
 import API from "../plugin/axios/axiosInstance";
 import Login from "../components/Login/index.vue";
@@ -354,8 +355,8 @@ function handleMouseUp() {
       bemoved = false;
       if (beclicked !== -1) {
         let newBrushId = timesTamp(baseBrushId());
-        brushUpdate(pathArr[beclicked], newBrushId);
         wsUpdate(pathArr[beclicked], newBrushId);
+        brushUpdate(pathArr[beclicked], newBrushId);
       }
     }
   }
@@ -408,25 +409,45 @@ const wsLink = () => {
   }
   socket.onmessage = function (message: any) {
     if (message.data && message.data.indexOf('{') != -1) {
-      let brushData = JSON.parse(message.data);
+      let data = JSON.parse(message.data);
+      let brushData = data.data;
+      let code = data.code;
       brushData.data = JSON.parse(brushData.data);
       let flag = 1;
-      pathArr.map(item => {
-        if (item.brushId === brushData.brushId) flag = 0;
-      })
-      if (flag) {
-        pathArr.push(brushData);
+      if (code == 100) {
+        pathArr.map(item => {
+          if (item.brushId === brushData.brushId) flag = 0;
+        })
+        if (flag) {
+          pathArr.push(brushData);
+        }
+        drawArr(pathArr, ctx, canvas);
+      } else if (code == 200) {
+        let idx = -1;
+        for (let i = 0; i < pathArr.length; ++i) {
+          if (pathArr[i].brushId == data.oldBrushId) {
+            idx = i;
+            break;
+          }
+        }
+        if (idx >= 0) {
+          pathArr.splice(idx, 1);
+          pathArr.push(brushData);
+          brushData.checked = false;
+          drawArr(pathArr, ctx, canvas);
+        }
       }
-      drawArr(pathArr, ctx, canvas);
     }
   }
 }
 const wsUpdate = (brushInfo: DrawInfo, newBrushId: string) => {
   if (!socket) return;
+  let info = _.cloneDeep(brushInfo);
+  info.data = JSON.stringify(info.data);
   socket.send(JSON.stringify({
     code: 200,
     newBrushId,
-    brushInfo,
+    brushData: info,
   }));
 }
 const wsAdd = (brushId: string) => {
@@ -586,6 +607,7 @@ onMounted(async () => {
     }).then((res) => {
       if (res.data.status === 200) {
         res.data.data.map((item: any) => {
+          console.log(item.data);
           item.data = JSON.parse(item.data);
           pathArr.push(item as DrawInfo);
         });

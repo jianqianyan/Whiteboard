@@ -26,12 +26,15 @@ router.ws("/onlineBoard", function (ws, req) {
       let brushId = mesData.brushId;
       let data = await getBrushData(brushId);
       sub.map(item => {
-        item.send(JSON.stringify(data));
+        item.send(JSON.stringify({ data, code: 100 }));
       })
     } else if (mesData.code == 200) {
+      let oldBrushId = mesData.brushData.brushId;
+      mesData.brushData.brushId = mesData.newBrushId;
       let info = {
-        newBrushId: mesData.newBrushId,
-        drawInfo: mesData.drawInfo
+        oldBrushId,
+        data: mesData.brushData,
+        code: 200
       }
       sub.map(item => {
         item.send(JSON.stringify(info));
