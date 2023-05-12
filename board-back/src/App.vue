@@ -13,5 +13,6 @@ import { RouterView } from "vue-router";
   height: 100vh;
   width: 100vw;
   color: var(--font-color);
+  font-family: Source Han Serif, sans-serif;
 }
 </style>

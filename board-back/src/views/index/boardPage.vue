@@ -61,6 +61,7 @@
           </div>
           <div class="canvas-button">
             <el-button>禁用</el-button>
+            <el-button>导出PNG</el-button>
           </div>
         </div>
       </div>

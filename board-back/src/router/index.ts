@@ -6,6 +6,10 @@ import homePage from "../views/index/homePage.vue";
 import userPage from "../views/index/userPage.vue";
 import errorPage from "../views/index/errorPage.vue";
 import powerPage from "../views/index/powerPage.vue";
+import systemPage from "../views/index/systemPage.vue";
+import dataBackupPage from "../views/index/dataBackupPage.vue";
+import operationPage from "../views/index/operationPage.vue";
+import helpPage from "../views/index/helpPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +48,26 @@ const router = createRouter({
           path: "power",
           name: "power",
           component: powerPage,
+        },
+        {
+          path: "system",
+          name: "system",
+          component: systemPage,
+        },
+        {
+          path: "dataBackup",
+          name: "dataBackup",
+          component: dataBackupPage,
+        },
+        {
+          path: "operation",
+          name: "operation",
+          component: operationPage,
+        },
+        {
+          path: "help",
+          name: "help",
+          component: helpPage,
         },
       ],
     },

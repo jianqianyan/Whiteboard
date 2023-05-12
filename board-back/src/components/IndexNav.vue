@@ -1,9 +1,23 @@
 <template>
   <div class="index-nav">
-    <div class="nav-title"><p>Whiteboard</p></div>
+    <div class="nav-title">
+      <p>Whiteboard</p>
+      <div class="nav-input">
+        <el-input
+          class="w-50 m-2"
+          placeholder="Please Input"
+          size="small"
+          :prefix-icon="Search"
+          width="280"
+        />
+      </div>
+    </div>
     <div class="nav-body"></div>
     <div class="user-box">
       <div class="user-box-body">
+        <div class="bell">
+          <el-icon><Bell /></el-icon>
+        </div>
         <div class="user-img"><img :src="userImg" alt="" /></div>
         <div class="user-name"><p>Qian yan</p></div>
       </div>
@@ -13,6 +27,7 @@
 
 <script setup lang="ts">
 import userImg from "../assets/user.png";
+import { Search } from "@element-plus/icons-vue";
 </script>
 
 <style scoped lang="less">
@@ -21,22 +36,23 @@ import userImg from "../assets/user.png";
   width: 100%;
   box-shadow: 0 0.5rem 1rem 0 rgb(44 51 73 / 10%);
   display: flex;
+  justify-content: space-between;
 }
 .nav-title {
-  width: 15%;
   // background: red;
   display: flex;
   align-items: center;
   padding-left: 1rem;
   font-size: 1.1rem;
-}
-.nav-body {
-  flex: 1;
+  .nav-input {
+    width: 280px;
+    margin-left: 20px;
+  }
 }
 .user-box {
-  width: 10%;
   display: flex;
   align-items: center;
+  margin-right: 20px;
   .user-box-body {
     display: flex;
     .user-img {
@@ -56,6 +72,15 @@ import userImg from "../assets/user.png";
       margin-left: 1rem;
       display: flex;
       align-items: center;
+    }
+    .bell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      height: 2.5rem;
+      width: 2.5rem;
+      margin-right: 10px;
     }
   }
 }

@@ -19,7 +19,7 @@
 const menuList = [
   {
     title: "总用户人数",
-    icon: "icon-zongrenshu",
+    icon: "icon-zhiborenshu",
     number: 10080,
   },
   {
@@ -29,17 +29,17 @@ const menuList = [
   },
   {
     title: "今日新增用户",
-    icon: "icon-zongrenshu1",
+    icon: "icon-renshu",
     number: 56,
   },
   {
     title: "今日新增白板数量",
-    icon: "icon-baiban1",
+    icon: "icon-baiban",
     number: 120,
   },
   {
     title: "新增报错",
-    icon: "icon-cuowu",
+    icon: "icon-icon-cross-solid",
     number: 1,
   },
 ];

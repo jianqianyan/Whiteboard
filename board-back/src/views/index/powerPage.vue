@@ -47,7 +47,13 @@
             <el-table-column label="操作">
               <template #default>
                 <el-button link type="primary" size="small">修改</el-button>
-                <el-button link type="primary" size="small">分配权限</el-button>
+                <el-button
+                  link
+                  type="primary"
+                  size="small"
+                  @click="adminDialog = true"
+                  >分配权限</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
@@ -74,6 +80,23 @@
           <el-checkbox label="密码重置" />
           <el-checkbox label="名字修改" />
           <el-checkbox label="注销功能" />
+        </el-form-item>
+      </el-form>
+      <div class="button-box">
+        <el-button style="width: 10vw" type="primary">保存</el-button>
+        <el-button style="width: 10vw">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog v-model="adminDialog" title="权限分配" width="40%">
+      <el-form label-width="120px">
+        <el-form-item label="管理员id">1</el-form-item>
+        <el-form-item label="管理员名称">李四</el-form-item>
+        <el-form-item label="权限分配">
+          <el-checkbox label="白板管理"></el-checkbox>
+          <el-checkbox label="用户管理"></el-checkbox>
+          <el-checkbox label="系统设置"></el-checkbox>
+          <el-checkbox label="权限分配"></el-checkbox>
+          <el-checkbox label="报错处理"></el-checkbox>
         </el-form-item>
       </el-form>
       <div class="button-box">

@@ -6,6 +6,11 @@
       :key="index"
       @click="linkto(item)"
     >
+      <svg-icon
+        :iconName="item.icon"
+        :color="activeItem == item ? '#fff' : '#000'"
+      ></svg-icon
+      >&nbsp;
       {{ item.name }}
     </div>
   </div>
@@ -18,53 +23,64 @@ const routerRef = ref(router);
 class routerClass {
   name: string;
   link: string;
-  constructor(name: string, link: string) {
+  icon: string;
+  constructor(name: string, link: string, icon: string) {
     this.name = name;
     this.link = link;
+    this.icon = icon;
   }
 }
 const menuList = [
   {
     name: "首页",
     link: "/index/homePage",
+    icon: "icon-shouye",
   },
   {
     name: "用户",
     link: "/index/userPage",
+    icon: "icon-renshu",
   },
   {
     name: "白板",
     link: "/index/boardPage",
+    icon: "icon-baiban",
   },
   {
     name: "报错",
     link: "/index/errorPage",
+    icon: "icon-icon-cross-solid",
   },
   {
     name: "权限管理",
     link: "/index/power",
+    icon: "icon-quanxianyuechi",
   },
   {
     name: "系统设置",
     link: "/index/system",
+    icon: "icon-wangluoxitong",
   },
   {
     name: "数据备份与恢复",
     link: "/index/dataBackup",
+    icon: "icon-shujuku",
   },
   {
     name: "操作日志",
     link: "/index/operation",
+    icon: "icon-rizhi",
   },
   {
     name: "帮助与支持",
     link: "/index/help",
+    icon: "icon-bangzhu",
   },
 ];
 let menu = reactive<routerClass[]>([]);
 let activeItem = ref<routerClass>();
 for (let menuItem of menuList) {
-  menu.push(new routerClass(menuItem.name, menuItem.link));
+  menu.push(new routerClass(menuItem.name, menuItem.link, menuItem.icon));
 }
 const linkto = (item: routerClass) => {
   activeItem.value = item;
@@ -94,16 +110,22 @@ onMounted(() => {
   color: var(--font-color);
   transform: all 0.2s;
   cursor: pointer;
+  :deep(.svg-icon) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
 }
 .active {
-  background: rgb(44 51 73 / 10%);
+  background: #6965db;
+  color: #fff;
   animation-name: behover;
   animation-duration: 1s;
 }
 .menu-son:hover {
   animation-name: behover;
   animation-duration: 1s;
-  background: rgb(44 51 73 / 10%);
+  background: #6965db;
+  color: #fff;
 }
 
 @keyframes behover {
@@ -111,7 +133,8 @@ onMounted(() => {
     background-color: #fff;
   }
   to {
-    background-color: rgb(44 51 73 / 10%);
+    background-color: #6965db;
+    color: #fff;
   }
 }
 </style>
